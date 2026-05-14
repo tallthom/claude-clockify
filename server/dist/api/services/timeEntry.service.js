@@ -75,18 +75,9 @@ export class TimeEntryService {
         });
     }
     async getTodayTimeEntries(workspaceId, userId) {
-        // Use the user's local timezone offset to correctly define "today"
-        // This ensures users in UTC+ timezones (e.g. JST = UTC+9) get the right day boundary
         const now = new Date();
-        const offsetMs = now.getTimezoneOffset() * 60 * 1000;
-        // Start of today in local time, expressed as UTC
-        const localMidnight = new Date(now);
-        localMidnight.setHours(0, 0, 0, 0);
-        const startUtc = new Date(localMidnight.getTime() - offsetMs);
-        // End of today in local time
-        const localEndOfDay = new Date(localMidnight);
-        localEndOfDay.setDate(localEndOfDay.getDate() + 1);
-        const endUtc = new Date(localEndOfDay.getTime() - offsetMs);
+        const startUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+        const endUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1));
         return this.getTimeEntriesInRange(workspaceId, userId, startUtc, endUtc);
     }
     async getWeekTimeEntries(workspaceId, userId) {

@@ -158,8 +158,9 @@ export class ConfigurationManager {
         if (process.env.ALLOWED_WORKSPACES) {
             restrictions.allowedWorkspaces = process.env.ALLOWED_WORKSPACES.split(',').map(s => s.trim());
         }
-        if (process.env.DEFAULT_WORKSPACE_ID) {
-            restrictions.defaultWorkspaceId = process.env.DEFAULT_WORKSPACE_ID;
+        if (process.env.DEFAULT_WORKSPACE_ID || process.env.CLOCKIFY_WORKSPACE_ID) {
+            restrictions.defaultWorkspaceId =
+                process.env.DEFAULT_WORKSPACE_ID || process.env.CLOCKIFY_WORKSPACE_ID;
         }
         // Parse operation restrictions
         if (process.env.READ_ONLY) {
@@ -263,7 +264,10 @@ export class ConfigurationManager {
         return this.config.restrictions.defaultProjectId;
     }
     getDefaultWorkspaceId() {
-        return this.config.restrictions.defaultWorkspaceId;
+        // Check live env first so auto-detection in main() is picked up after config construction
+        return (process.env.DEFAULT_WORKSPACE_ID ||
+            process.env.CLOCKIFY_WORKSPACE_ID ||
+            this.config.restrictions.defaultWorkspaceId);
     }
     validateTimeEntry(start, end) {
         const restrictions = this.config.restrictions;
