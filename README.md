@@ -10,6 +10,8 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 
 Supported on **macOS** and **Windows**.
 
+> **Security prompt:** During installation, Claude Desktop will warn that "developer information has not been verified by Anthropic." This is shown for all third-party extensions — Anthropic doesn't yet offer a developer verification programme. This extension is built and maintained by the Moodle team; you can review the full source in this repository.
+
 ## Getting your Clockify credentials
 
 You'll need two things: an **API Key** and your **Workspace ID**.
