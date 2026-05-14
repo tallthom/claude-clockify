@@ -1,0 +1,12 @@
+{
+  "name": "moodle-clockify-server",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.3",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}
