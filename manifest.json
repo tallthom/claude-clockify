@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "moodle-clockify",
   "display_name": "Moodle Clockify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Clockify time tracking integration for Claude Desktop. Log time, check running timers, and manage time entries.",
   "author": {
     "name": "Thom Rawson",
