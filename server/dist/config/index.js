@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import dotenv from 'dotenv';
-dotenv.config({ quiet: true });
+dotenv.config();
 export const ConfigSchema = z.object({
     apiKey: z.string().min(1, 'API key is required'),
     apiUrl: z.string().url().default('https://api.clockify.me/api/v1'),
@@ -83,7 +83,7 @@ export const ConfigSchema = z.object({
             'bulk',
             'search',
         ]))
-            .default(['user', 'workspace', 'project', 'timeEntry', 'report'])
+            .default(['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search'])
             .describe('Categories of tools to enable'),
         enabledTools: z
             .array(z.string())
@@ -93,7 +93,7 @@ export const ConfigSchema = z.object({
         maxTools: z.number().default(50).describe('Maximum number of tools to expose'),
     })
         .default(() => ({
-        enabledCategories: ['user', 'workspace', 'project', 'timeEntry', 'report'],
+        enabledCategories: ['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search'],
         maxTools: 50,
     })),
 });
@@ -158,9 +158,8 @@ export class ConfigurationManager {
         if (process.env.ALLOWED_WORKSPACES) {
             restrictions.allowedWorkspaces = process.env.ALLOWED_WORKSPACES.split(',').map(s => s.trim());
         }
-        if (process.env.DEFAULT_WORKSPACE_ID || process.env.CLOCKIFY_WORKSPACE_ID) {
-            restrictions.defaultWorkspaceId =
-                process.env.DEFAULT_WORKSPACE_ID || process.env.CLOCKIFY_WORKSPACE_ID;
+        if (process.env.DEFAULT_WORKSPACE_ID) {
+            restrictions.defaultWorkspaceId = process.env.DEFAULT_WORKSPACE_ID;
         }
         // Parse operation restrictions
         if (process.env.READ_ONLY) {
@@ -264,13 +263,14 @@ export class ConfigurationManager {
         return this.config.restrictions.defaultProjectId;
     }
     getDefaultWorkspaceId() {
-        // Check live env first so auto-detection in main() is picked up after config construction
-        return (process.env.DEFAULT_WORKSPACE_ID ||
-            process.env.CLOCKIFY_WORKSPACE_ID ||
-            this.config.restrictions.defaultWorkspaceId);
+        return this.config.restrictions.defaultWorkspaceId;
     }
     validateTimeEntry(start, end) {
         const restrictions = this.config.restrictions;
+        // Check future entries
+        if (!restrictions.allowFutureTimeEntries && start > new Date()) {
+            return { valid: false, error: 'Future time entries are not allowed' };
+        }
         // Check past entries
         const maxPastDate = new Date();
         maxPastDate.setDate(maxPastDate.getDate() - restrictions.allowPastTimeEntriesInDays);

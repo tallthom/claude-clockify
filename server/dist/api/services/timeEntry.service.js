@@ -7,22 +7,7 @@ export class TimeEntryService {
         return this.client.post(`/workspaces/${workspaceId}/time-entries`, data);
     }
     async getTimeEntriesForUser(workspaceId, userId, options) {
-        // If a specific page-size was requested (e.g. page-size: 1 for running timer), honour it
-        if (options?.['page-size']) {
-            return this.client.get(`/workspaces/${workspaceId}/user/${userId}/time-entries`, options);
-        }
-        // Otherwise paginate through all results automatically
-        const allEntries = [];
-        const pageSize = 50;
-        let page = 1;
-        while (true) {
-            const batch = await this.client.get(`/workspaces/${workspaceId}/user/${userId}/time-entries`, { ...options, 'page-size': pageSize, page });
-            allEntries.push(...batch);
-            if (batch.length < pageSize)
-                break;
-            page++;
-        }
-        return allEntries;
+        return this.client.get(`/workspaces/${workspaceId}/user/${userId}/time-entries`, options);
     }
     async getTimeEntryById(workspaceId, timeEntryId, options) {
         return this.client.get(`/workspaces/${workspaceId}/time-entries/${timeEntryId}`, options);
@@ -75,10 +60,11 @@ export class TimeEntryService {
         });
     }
     async getTodayTimeEntries(workspaceId, userId) {
-        const now = new Date();
-        const startUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-        const endUtc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1));
-        return this.getTimeEntriesInRange(workspaceId, userId, startUtc, endUtc);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return this.getTimeEntriesInRange(workspaceId, userId, today, tomorrow);
     }
     async getWeekTimeEntries(workspaceId, userId) {
         const today = new Date();

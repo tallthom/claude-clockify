@@ -25,9 +25,11 @@ const tools = clockifyTools.getTools();
 // List available tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-        tools: tools.map(tool => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        tools: tools.map((tool) => ({
             name: tool.name,
             description: tool.description,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             inputSchema: zodToJsonSchema(tool.inputSchema),
         })),
     };
@@ -223,24 +225,6 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 });
 // Start the server
 async function main() {
-    // Auto-detect workspace ID if not already set
-    if (!process.env.DEFAULT_WORKSPACE_ID) {
-        try {
-            const response = await fetch(`${config.getApiUrl()}/workspaces`, {
-                headers: { 'X-Api-Key': config.getApiKey() },
-            });
-            if (response.ok) {
-                const workspaces = (await response.json());
-                if (workspaces.length > 0) {
-                    process.env.DEFAULT_WORKSPACE_ID = workspaces[0].id;
-                    console.error(`Workspace auto-detected: ${workspaces[0].name} (${workspaces[0].id})`);
-                }
-            }
-        }
-        catch (e) {
-            console.error('Warning: could not auto-detect workspace ID:', e);
-        }
-    }
     const transport = new StdioServerTransport();
     await server.connect(transport);
     console.error('Clockify MCP server started successfully');
