@@ -4,14 +4,35 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 
 ## Installation
 
+### Claude Desktop (macOS and Windows)
+
 1. Download `claude-clockify.mcpb` from the [latest release](../../releases/latest)
 2. Go to [claude.ai/settings](https://claude.ai/settings) → **Extensions**
 3. Click **Add Extension** and select the downloaded `.mcpb` file
 4. Enter your Clockify credentials when prompted (see below)
 
-Supported on **macOS** and **Windows**.
-
 > **Security prompt:** During installation, Claude will warn that "developer information has not been verified by Anthropic." This is shown for all third-party extensions — Anthropic doesn't yet offer a developer verification programme. You can review the full source in this repository.
+
+### Claude CLI / Linux
+
+1. Clone this repository: `git clone https://github.com/tallthom/claude-clockify.git`
+2. Install dependencies: `cd claude-clockify/server && npm install`
+3. Add the following to your Claude CLI MCP config (`~/.claude/settings.json` → `mcpServers`):
+
+```json
+{
+  "mcpServers": {
+    "clockify": {
+      "command": "node",
+      "args": ["/path/to/claude-clockify/server/dist/index.js"],
+      "env": {
+        "CLOCKIFY_API_KEY": "your_api_key",
+        "CLOCKIFY_WORKSPACE_ID": "your_workspace_id"
+      }
+    }
+  }
+}
+```
 
 ## Getting your Clockify credentials
 
@@ -41,4 +62,4 @@ Once installed, you can ask Claude things like:
 
 ## Source
 
-Built on top of [clockify-master-mcp](https://github.com/tallthom/clockify-master-mcp), a fork of [@hongkongkiwi/clockify-master-mcp](https://github.com/hongkongkiwi/clockify-master-mcp) with pagination and timezone fixes applied.
+Built on top of [@hongkongkiwi/clockify-master-mcp](https://github.com/hongkongkiwi/clockify-master-mcp) with pagination and timezone fixes applied.
