@@ -9,7 +9,7 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 1. Download `claude-clockify.mcpb` from the [latest release](../../releases/latest)
 2. Go to [claude.ai/settings](https://claude.ai/settings) → **Extensions**
 3. Click **Add Extension** and select the downloaded `.mcpb` file
-4. Enter your Clockify credentials when prompted (see below)
+4. Enter your Clockify API key when prompted (see below)
 
 > **Security prompt:** During installation, Claude will warn that "developer information has not been verified by Anthropic." This is shown for all third-party extensions — Anthropic doesn't yet offer a developer verification programme. You can review the full source in this repository.
 
@@ -26,8 +26,7 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
       "command": "node",
       "args": ["/path/to/claude-clockify/server/dist/index.js"],
       "env": {
-        "CLOCKIFY_API_KEY": "your_api_key",
-        "CLOCKIFY_WORKSPACE_ID": "your_workspace_id"
+        "CLOCKIFY_API_KEY": "your_api_key"
       }
     }
   }
@@ -36,7 +35,7 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 
 ## Getting your Clockify credentials
 
-You'll need two things: an **API Key** and your **Workspace ID**.
+You need one thing: an **API Key**.
 
 ### API Key
 
@@ -45,11 +44,18 @@ You'll need two things: an **API Key** and your **Workspace ID**.
 3. Scroll to the **API** section at the bottom
 4. Click **Generate** if you don't have a key, then copy it
 
-### Workspace ID
+### Workspace ID (optional)
 
-1. In Clockify, go to **Settings** → **General**
-2. Your Workspace ID is shown near the top of the page
-3. It's also visible in your browser URL: `app.clockify.me/workspaces/WORKSPACE_ID/...`
+The extension automatically fetches your workspaces from the Clockify API. If you only have one workspace, no further configuration is needed.
+
+If you have multiple workspaces and want to lock the extension to a specific one, add `CLOCKIFY_WORKSPACE_ID` to your config:
+
+```json
+"env": {
+  "CLOCKIFY_API_KEY": "your_api_key",
+  "CLOCKIFY_WORKSPACE_ID": "your_workspace_id"
+}
+```
 
 ## What you can do
 
