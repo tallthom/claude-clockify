@@ -13,6 +13,7 @@ export declare class ClockifyTools {
     private restrictionMiddleware;
     private config;
     constructor(apiKey: string, config: ConfigurationManager);
+    private enrichTimeEntries;
     private isProtectedProject;
     private isConfiguredProject;
     private getAllTools;

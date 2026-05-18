@@ -540,15 +540,15 @@ export declare const searchProjectsSchema: z.ZodObject<{
     workspaceId: string;
     name?: string | undefined;
     archived?: boolean | undefined;
-    clientId?: string | undefined;
     page?: number | undefined;
+    clientId?: string | undefined;
     pageSize?: number | undefined;
 }, {
     workspaceId: string;
     name?: string | undefined;
     archived?: boolean | undefined;
-    clientId?: string | undefined;
     page?: number | undefined;
+    clientId?: string | undefined;
     pageSize?: number | undefined;
 }>;
 export declare const searchUsersSchema: z.ZodObject<{

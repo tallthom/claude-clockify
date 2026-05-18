@@ -28,6 +28,40 @@ export class ClockifyTools {
         this.restrictionMiddleware = new RestrictionMiddleware(config);
         this.config = config;
     }
+    async enrichTimeEntries(workspaceId, entries) {
+        if (entries.length === 0)
+            return entries;
+        // Collect unique project and task IDs
+        const projectIds = [...new Set(entries.map(e => e.projectId).filter(Boolean))];
+        const taskPairs = entries
+            .filter(e => e.taskId && e.projectId)
+            .map(e => ({ taskId: e.taskId, projectId: e.projectId }));
+        const uniqueTaskPairs = taskPairs.filter((pair, i, arr) => arr.findIndex(p => p.taskId === pair.taskId) === i);
+        // Fetch projects and tasks in parallel
+        const [projectResults, taskResults] = await Promise.all([
+            Promise.all(projectIds.map(id => this.projectService.getProjectById(workspaceId, id).catch(() => null))),
+            Promise.all(uniqueTaskPairs.map(({ taskId, projectId }) => this.taskService.getTaskById(workspaceId, projectId, taskId).catch(() => null))),
+        ]);
+        const projectMap = new Map();
+        projectIds.forEach((id, i) => {
+            if (projectResults[i])
+                projectMap.set(id, projectResults[i].name);
+        });
+        const taskMap = new Map();
+        uniqueTaskPairs.forEach(({ taskId }, i) => {
+            if (taskResults[i])
+                taskMap.set(taskId, taskResults[i].name);
+        });
+        return entries.map(entry => ({
+            ...entry,
+            project: entry.projectId
+                ? { id: entry.projectId, name: projectMap.get(entry.projectId) ?? entry.projectId }
+                : undefined,
+            task: entry.taskId
+                ? { id: entry.taskId, name: taskMap.get(entry.taskId) ?? entry.taskId }
+                : undefined,
+        }));
+    }
     isProtectedProject(projectId) {
         const defaultProjectId = this.config.getDefaultProjectId();
         const restrictions = this.config.getRestrictions();
@@ -523,7 +557,7 @@ export class ClockifyTools {
                 handler: async (input) => {
                     const { workspaceId, userId, projectId, ...options } = input;
                     const entries = await this.timeEntryService.getTimeEntriesForUser(workspaceId, userId, projectId ? { ...options, project: projectId } : options);
-                    return { success: true, data: entries };
+                    return { success: true, data: await this.enrichTimeEntries(workspaceId, entries) };
                 },
             },
             {
@@ -553,7 +587,8 @@ export class ClockifyTools {
                 }),
                 handler: async (input) => {
                     const entry = await this.timeEntryService.getTimeEntryById(input.workspaceId, input.timeEntryId);
-                    return { success: true, data: entry };
+                    const [enriched] = await this.enrichTimeEntries(input.workspaceId, [entry]);
+                    return { success: true, data: enriched };
                 },
             },
             {
@@ -609,7 +644,7 @@ export class ClockifyTools {
                 }),
                 handler: async (input) => {
                     const entries = await this.timeEntryService.getTodayTimeEntries(input.workspaceId, input.userId);
-                    return { success: true, data: entries };
+                    return { success: true, data: await this.enrichTimeEntries(input.workspaceId, entries) };
                 },
             },
             {
@@ -622,7 +657,7 @@ export class ClockifyTools {
                 }),
                 handler: async (input) => {
                     const entries = await this.timeEntryService.getWeekTimeEntries(input.workspaceId, input.userId);
-                    return { success: true, data: entries };
+                    return { success: true, data: await this.enrichTimeEntries(input.workspaceId, entries) };
                 },
             },
             {
@@ -637,7 +672,7 @@ export class ClockifyTools {
                 }),
                 handler: async (input) => {
                     const entries = await this.timeEntryService.getMonthTimeEntries(input.workspaceId, input.userId, input.year, input.month);
-                    return { success: true, data: entries };
+                    return { success: true, data: await this.enrichTimeEntries(input.workspaceId, entries) };
                 },
             },
             {

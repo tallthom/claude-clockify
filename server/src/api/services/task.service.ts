@@ -15,10 +15,28 @@ export class TaskService {
       'page-size'?: number;
     }
   ): Promise<ClockifyTask[]> {
-    return this.client.get<ClockifyTask[]>(
-      `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
-      options
-    );
+    // If caller requested a specific page, honour it directly
+    if (options?.page !== undefined) {
+      return this.client.get<ClockifyTask[]>(
+        `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
+        options
+      );
+    }
+
+    // Otherwise auto-paginate until we get a short page
+    const pageSize = 50;
+    const all: ClockifyTask[] = [];
+    let page = 1;
+    while (true) {
+      const batch = await this.client.get<ClockifyTask[]>(
+        `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
+        { ...options, page, 'page-size': pageSize }
+      );
+      all.push(...batch);
+      if (batch.length < pageSize) break;
+      page++;
+    }
+    return all;
   }
 
   async getTaskById(workspaceId: string, projectId: string, taskId: string): Promise<ClockifyTask> {

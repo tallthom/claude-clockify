@@ -4,7 +4,22 @@ export class TaskService {
         this.client = client;
     }
     async getAllTasks(workspaceId, projectId, options) {
-        return this.client.get(`/workspaces/${workspaceId}/projects/${projectId}/tasks`, options);
+        // If caller requested a specific page, honour it directly
+        if (options?.page !== undefined) {
+            return this.client.get(`/workspaces/${workspaceId}/projects/${projectId}/tasks`, options);
+        }
+        // Otherwise auto-paginate until we get a short page
+        const pageSize = 50;
+        const all = [];
+        let page = 1;
+        while (true) {
+            const batch = await this.client.get(`/workspaces/${workspaceId}/projects/${projectId}/tasks`, { ...options, page, 'page-size': pageSize });
+            all.push(...batch);
+            if (batch.length < pageSize)
+                break;
+            page++;
+        }
+        return all;
     }
     async getTaskById(workspaceId, projectId, taskId) {
         return this.client.get(`/workspaces/${workspaceId}/projects/${projectId}/tasks/${taskId}`);
