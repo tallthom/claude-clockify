@@ -46,7 +46,7 @@ You need one thing: an **API Key**.
 
 ### Workspace ID (optional)
 
-The extension automatically fetches your workspaces from the Clockify API. If you only have one workspace, no further configuration is needed.
+The extension automatically fetches your workspaces from the Clockify API. **If you only have one workspace, no further configuration is needed.**
 
 If you have multiple workspaces and want to lock the extension to a specific one, add `CLOCKIFY_WORKSPACE_ID` to your config:
 
