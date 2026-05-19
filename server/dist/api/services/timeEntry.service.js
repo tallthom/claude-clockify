@@ -1,3 +1,48 @@
+import { execFileSync } from 'child_process';
+function getSystemTimezone() {
+    if (process.env.CLOCKIFY_TIMEZONE)
+        return process.env.CLOCKIFY_TIMEZONE;
+    try {
+        if (process.platform === 'win32') {
+            const raw = execFileSync('tzutil', ['/g'], { encoding: 'utf8' }).trim();
+            // Convert Windows timezone name to IANA if possible, fall through to Intl otherwise
+            const mapped = windowsToIana(raw);
+            if (mapped)
+                return mapped;
+        }
+        else {
+            const link = execFileSync('readlink', ['/etc/localtime'], { encoding: 'utf8' }).trim();
+            return link.replace(/.*zoneinfo\//, '');
+        }
+    }
+    catch { /* fall through */ }
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+function windowsToIana(win) {
+    // Minimal map for common zones — extend as needed
+    const map = {
+        'Tokyo Standard Time': 'Asia/Tokyo',
+        'UTC': 'UTC',
+        'GMT Standard Time': 'Europe/London',
+        'Central European Standard Time': 'Europe/Paris',
+        'Eastern Standard Time': 'America/New_York',
+        'Central Standard Time': 'America/Chicago',
+        'Mountain Standard Time': 'America/Denver',
+        'Pacific Standard Time': 'America/Los_Angeles',
+        'AUS Eastern Standard Time': 'Australia/Sydney',
+    };
+    return map[win] ?? null;
+}
+const SYSTEM_TZ = getSystemTimezone();
+function localMidnight(date) {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: SYSTEM_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
+    }).formatToParts(date);
+    const y = parts.find(p => p.type === 'year').value;
+    const m = parts.find(p => p.type === 'month').value;
+    const d = parts.find(p => p.type === 'day').value;
+    return new Date(`${y}-${m}-${d}T00:00:00`);
+}
 export class TimeEntryService {
     client;
     constructor(client) {
@@ -60,18 +105,15 @@ export class TimeEntryService {
         });
     }
     async getTodayTimeEntries(workspaceId, userId) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = localMidnight(new Date());
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         return this.getTimeEntriesInRange(workspaceId, userId, today, tomorrow);
     }
     async getWeekTimeEntries(workspaceId, userId) {
-        const today = new Date();
-        const dayOfWeek = today.getDay();
+        const today = localMidnight(new Date());
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - dayOfWeek);
-        startOfWeek.setHours(0, 0, 0, 0);
+        startOfWeek.setDate(today.getDate() - today.getDay());
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 7);
         return this.getTimeEntriesInRange(workspaceId, userId, startOfWeek, endOfWeek);
@@ -80,8 +122,8 @@ export class TimeEntryService {
         const now = new Date();
         const targetYear = year || now.getFullYear();
         const targetMonth = month !== undefined ? month : now.getMonth();
-        const startOfMonth = new Date(targetYear, targetMonth, 1);
-        const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59, 999);
+        const startOfMonth = localMidnight(new Date(targetYear, targetMonth, 1));
+        const endOfMonth = localMidnight(new Date(targetYear, targetMonth + 1, 1));
         return this.getTimeEntriesInRange(workspaceId, userId, startOfMonth, endOfMonth);
     }
 }

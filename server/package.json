@@ -1,6 +1,6 @@
 {
   "name": "claude-clockify-server",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Claude Clockify MCP server — full Clockify API integration for Claude",
   "main": "dist/index.js",
   "type": "module",
