@@ -215,9 +215,16 @@ export class TimeEntryService {
     startDate: Date,
     endDate: Date
   ): Promise<ClockifyTimeEntry[]> {
-    return this.getTimeEntriesForUser(workspaceId, userId, {
+    // Clockify's start/end params filter by modification time, not interval start.
+    // Fetch a broad page and filter client-side by actual timeInterval.start.
+    const entries = await this.getTimeEntriesForUser(workspaceId, userId, {
       start: startDate.toISOString(),
       end: endDate.toISOString(),
+      'page-size': 200,
+    });
+    return entries.filter(e => {
+      const s = new Date(e.timeInterval.start).getTime();
+      return s >= startDate.getTime() && s < endDate.getTime();
     });
   }
 
