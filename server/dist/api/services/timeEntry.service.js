@@ -35,13 +35,23 @@ function windowsToIana(win) {
 }
 const SYSTEM_TZ = getSystemTimezone();
 function localMidnight(date) {
-    const parts = new Intl.DateTimeFormat('en-CA', {
+    // Get the local date in SYSTEM_TZ
+    const dateParts = new Intl.DateTimeFormat('en-CA', {
         timeZone: SYSTEM_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
     }).formatToParts(date);
-    const y = parts.find(p => p.type === 'year').value;
-    const m = parts.find(p => p.type === 'month').value;
-    const d = parts.find(p => p.type === 'day').value;
-    return new Date(`${y}-${m}-${d}T00:00:00`);
+    const y = parseInt(dateParts.find(p => p.type === 'year').value);
+    const mo = parseInt(dateParts.find(p => p.type === 'month').value) - 1;
+    const d = parseInt(dateParts.find(p => p.type === 'day').value);
+    // Get the UTC offset at noon on that day in SYSTEM_TZ (safe from DST boundary issues)
+    const noonUtc = Date.UTC(y, mo, d, 12, 0, 0);
+    const offsetParts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: SYSTEM_TZ, hour: '2-digit', minute: '2-digit', hour12: false,
+    }).formatToParts(new Date(noonUtc));
+    const localHour = parseInt(offsetParts.find(p => p.type === 'hour').value);
+    const localMin = parseInt(offsetParts.find(p => p.type === 'minute').value);
+    const offsetMs = (localHour * 60 + localMin - 12 * 60) * 60 * 1000;
+    // Midnight local = midnight UTC shifted by offset
+    return new Date(Date.UTC(y, mo, d, 0, 0, 0) - offsetMs);
 }
 export class TimeEntryService {
     client;
