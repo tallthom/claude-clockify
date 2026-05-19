@@ -120,14 +120,14 @@ export declare const createTimeEntrySchema: z.ZodObject<{
         sourceType?: string | undefined;
     }>, "many">>;
 }, "strip", z.ZodTypeAny, {
-    workspaceId: string;
     start: string;
+    workspaceId: string;
     description: string;
     billable: boolean;
+    end?: string | undefined;
     type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
-    end?: string | undefined;
     tagIds?: string[] | undefined;
     hourlyRate?: {
         amount: number;
@@ -146,13 +146,13 @@ export declare const createTimeEntrySchema: z.ZodObject<{
         sourceType?: string | undefined;
     }[] | undefined;
 }, {
-    workspaceId: string;
     start: string;
+    workspaceId: string;
     description: string;
+    end?: string | undefined;
     type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
-    end?: string | undefined;
     tagIds?: string[] | undefined;
     billable?: boolean | undefined;
     hourlyRate?: {
@@ -226,11 +226,11 @@ export declare const updateTimeEntrySchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     workspaceId: string;
     timeEntryId: string;
+    start?: string | undefined;
+    end?: string | undefined;
     type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
-    start?: string | undefined;
-    end?: string | undefined;
     description?: string | undefined;
     tagIds?: string[] | undefined;
     billable?: boolean | undefined;
@@ -253,11 +253,11 @@ export declare const updateTimeEntrySchema: z.ZodObject<{
 }, {
     workspaceId: string;
     timeEntryId: string;
+    start?: string | undefined;
+    end?: string | undefined;
     type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
-    start?: string | undefined;
-    end?: string | undefined;
     description?: string | undefined;
     tagIds?: string[] | undefined;
     billable?: boolean | undefined;

@@ -52,6 +52,7 @@ export declare const ConfigSchema: z.ZodObject<{
     cacheEnabled: z.ZodDefault<z.ZodBoolean>;
     cacheTTLSeconds: z.ZodDefault<z.ZodNumber>;
     rateLimitPerMinute: z.ZodDefault<z.ZodNumber>;
+    timezone: z.ZodDefault<z.ZodString>;
     logLevel: z.ZodDefault<z.ZodEnum<["debug", "info", "warn", "error"]>>;
     toolFiltering: z.ZodDefault<z.ZodObject<{
         enabledCategories: z.ZodDefault<z.ZodArray<z.ZodEnum<["user", "workspace", "project", "client", "timeEntry", "tag", "task", "report", "bulk", "search"]>, "many">>;
@@ -92,6 +93,7 @@ export declare const ConfigSchema: z.ZodObject<{
     cacheEnabled: boolean;
     cacheTTLSeconds: number;
     rateLimitPerMinute: number;
+    timezone: string;
     logLevel: "debug" | "info" | "warn" | "error";
     toolFiltering: {
         enabledCategories: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search")[];
@@ -122,6 +124,7 @@ export declare const ConfigSchema: z.ZodObject<{
     cacheEnabled?: boolean | undefined;
     cacheTTLSeconds?: number | undefined;
     rateLimitPerMinute?: number | undefined;
+    timezone?: string | undefined;
     logLevel?: "debug" | "info" | "warn" | "error" | undefined;
     toolFiltering?: {
         enabledCategories?: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search")[] | undefined;
@@ -144,6 +147,7 @@ export declare class ConfigurationManager {
     isProjectAllowed(projectId: string): boolean;
     isWorkspaceAllowed(workspaceId: string): boolean;
     canPerformOperation(operation: string): boolean;
+    getTimezone(): string;
     getDefaultProjectId(): string | undefined;
     getDefaultWorkspaceId(): string | undefined;
     validateTimeEntry(start: Date, end?: Date): {

@@ -59,7 +59,7 @@ export declare class TimeEntryService {
     }): Promise<any>;
     bulkDeleteTimeEntries(workspaceId: string, timeEntryIds: string[]): Promise<void>;
     duplicateTimeEntry(workspaceId: string, timeEntryId: string): Promise<ClockifyTimeEntry>;
-    getTimeEntriesInRange(workspaceId: string, userId: string, startDate: Date, endDate: Date): Promise<ClockifyTimeEntry[]>;
+    getTimeEntriesInRange(workspaceId: string, userId: string, start: string, end: string): Promise<ClockifyTimeEntry[]>;
     getTodayTimeEntries(workspaceId: string, userId: string): Promise<ClockifyTimeEntry[]>;
     getWeekTimeEntries(workspaceId: string, userId: string): Promise<ClockifyTimeEntry[]>;
     getMonthTimeEntries(workspaceId: string, userId: string, year?: number, month?: number): Promise<ClockifyTimeEntry[]>;

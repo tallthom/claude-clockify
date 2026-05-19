@@ -63,6 +63,8 @@ export const ConfigSchema = z.object({
     cacheTTLSeconds: z.number().default(300).describe('Cache TTL in seconds'),
     // Rate limiting
     rateLimitPerMinute: z.number().default(50).describe('Max API calls per minute'),
+    // Timezone for displaying timestamps
+    timezone: z.string().default('UTC').describe('IANA timezone for displaying timestamps (e.g. Asia/Tokyo, Europe/Athens)'),
     // Logging
     logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
     // Tool Visibility
@@ -98,10 +100,12 @@ export const ConfigSchema = z.object({
 export class ConfigurationManager {
     config;
     constructor(overrides) {
+        const systemTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const envConfig = {
             apiKey: process.env.CLOCKIFY_API_KEY || '',
             apiUrl: process.env.CLOCKIFY_API_URL,
             region: process.env.CLOCKIFY_REGION,
+            timezone: process.env.CLOCKIFY_TIMEZONE || systemTimezone,
             restrictions: this.parseRestrictions(),
             toolFiltering: this.parseToolFiltering(),
             cacheEnabled: process.env.CACHE_ENABLED === 'true',
@@ -256,6 +260,9 @@ export class ConfigurationManager {
             default:
                 return true;
         }
+    }
+    getTimezone() {
+        return this.config.timezone;
     }
     getDefaultProjectId() {
         return this.config.restrictions.defaultProjectId;

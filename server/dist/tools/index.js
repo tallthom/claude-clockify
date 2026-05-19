@@ -1,4 +1,19 @@
 import { z } from 'zod';
+function formatLocalTime(iso, timezone) {
+    if (!iso)
+        return null;
+    const date = new Date(iso);
+    const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: timezone,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false,
+    }).formatToParts(date);
+    const get = (type) => parts.find(p => p.type === type)?.value ?? '';
+    const tz = new Intl.DateTimeFormat('en-US', { timeZone: timezone, timeZoneName: 'short' })
+        .formatToParts(date).find(p => p.type === 'timeZoneName')?.value ?? timezone;
+    return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')} ${tz}`;
+}
 import { ClockifyApiClient, UserService, WorkspaceService, ProjectService, ClientService, TimeEntryService, TagService, TaskService, ReportService, CustomFieldService, } from '../api/services/index.js';
 import * as schemas from './schemas.js';
 import { RestrictionMiddleware } from '../middleware/restrictions.js';
@@ -52,6 +67,7 @@ export class ClockifyTools {
             if (taskResults[i])
                 taskMap.set(taskId, taskResults[i].name);
         });
+        const timezone = this.config.getTimezone();
         return entries.map(entry => ({
             ...entry,
             project: entry.projectId
@@ -60,6 +76,11 @@ export class ClockifyTools {
             task: entry.taskId
                 ? { id: entry.taskId, name: taskMap.get(entry.taskId) ?? entry.taskId }
                 : undefined,
+            timeInterval: {
+                ...entry.timeInterval,
+                localStart: formatLocalTime(entry.timeInterval?.start, timezone),
+                localEnd: formatLocalTime(entry.timeInterval?.end, timezone),
+            },
         }));
     }
     isProtectedProject(projectId) {
