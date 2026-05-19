@@ -1,6 +1,4 @@
 import { z } from 'zod';
-import dotenv from 'dotenv';
-dotenv.config();
 export const ConfigSchema = z.object({
     apiKey: z.string().min(1, 'API key is required'),
     apiUrl: z.string().url().default('https://api.clockify.me/api/v1'),
