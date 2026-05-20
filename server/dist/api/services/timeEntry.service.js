@@ -11,7 +11,8 @@ export class TimeEntryService {
         this.client = client;
     }
     async createTimeEntry(workspaceId, data) {
-        return this.client.post(`/workspaces/${workspaceId}/time-entries`, data);
+        const payload = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== null && v !== undefined));
+        return this.client.post(`/workspaces/${workspaceId}/time-entries`, payload);
     }
     async getTimeEntriesForUser(workspaceId, userId, options) {
         return this.client.get(`/workspaces/${workspaceId}/user/${userId}/time-entries`, options);

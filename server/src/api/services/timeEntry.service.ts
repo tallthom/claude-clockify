@@ -16,7 +16,10 @@ export class TimeEntryService {
     workspaceId: string,
     data: ClockifyTimeEntryRequest
   ): Promise<ClockifyTimeEntry> {
-    return this.client.post<ClockifyTimeEntry>(`/workspaces/${workspaceId}/time-entries`, data);
+    const payload = Object.fromEntries(
+      Object.entries(data).filter(([, v]) => v !== null && v !== undefined)
+    );
+    return this.client.post<ClockifyTimeEntry>(`/workspaces/${workspaceId}/time-entries`, payload);
   }
 
   async getTimeEntriesForUser(

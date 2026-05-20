@@ -121,13 +121,12 @@ export declare const createTimeEntrySchema: z.ZodObject<{
     }>, "many">>;
 }, "strip", z.ZodTypeAny, {
     start: string;
-    workspaceId: string;
-    description: string;
     billable: boolean;
-    end?: string | undefined;
-    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
+    description: string;
+    workspaceId: string;
     projectId?: string | undefined;
     taskId?: string | undefined;
+    end?: string | undefined;
     tagIds?: string[] | undefined;
     hourlyRate?: {
         amount: number;
@@ -137,6 +136,7 @@ export declare const createTimeEntrySchema: z.ZodObject<{
         amount: number;
         currency: string;
     } | undefined;
+    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     kioskId?: string | undefined;
     customFields?: {
         value: string | number | boolean;
@@ -147,14 +147,13 @@ export declare const createTimeEntrySchema: z.ZodObject<{
     }[] | undefined;
 }, {
     start: string;
-    workspaceId: string;
     description: string;
-    end?: string | undefined;
-    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
+    workspaceId: string;
+    billable?: boolean | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
+    end?: string | undefined;
     tagIds?: string[] | undefined;
-    billable?: boolean | undefined;
     hourlyRate?: {
         amount: number;
         currency: string;
@@ -163,6 +162,7 @@ export declare const createTimeEntrySchema: z.ZodObject<{
         amount: number;
         currency: string;
     } | undefined;
+    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     kioskId?: string | undefined;
     customFields?: {
         value: string | number | boolean;
@@ -227,13 +227,12 @@ export declare const updateTimeEntrySchema: z.ZodObject<{
     workspaceId: string;
     timeEntryId: string;
     start?: string | undefined;
-    end?: string | undefined;
-    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
+    billable?: boolean | undefined;
+    description?: string | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
-    description?: string | undefined;
+    end?: string | undefined;
     tagIds?: string[] | undefined;
-    billable?: boolean | undefined;
     hourlyRate?: {
         amount: number;
         currency: string;
@@ -242,6 +241,7 @@ export declare const updateTimeEntrySchema: z.ZodObject<{
         amount: number;
         currency: string;
     } | undefined;
+    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     kioskId?: string | undefined;
     customFields?: {
         value: string | number | boolean;
@@ -254,13 +254,12 @@ export declare const updateTimeEntrySchema: z.ZodObject<{
     workspaceId: string;
     timeEntryId: string;
     start?: string | undefined;
-    end?: string | undefined;
-    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
+    billable?: boolean | undefined;
+    description?: string | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
-    description?: string | undefined;
+    end?: string | undefined;
     tagIds?: string[] | undefined;
-    billable?: boolean | undefined;
     hourlyRate?: {
         amount: number;
         currency: string;
@@ -269,6 +268,7 @@ export declare const updateTimeEntrySchema: z.ZodObject<{
         amount: number;
         currency: string;
     } | undefined;
+    type?: "REGULAR" | "BREAK" | "CLOCK_IN_OUT" | undefined;
     kioskId?: string | undefined;
     customFields?: {
         value: string | number | boolean;
@@ -331,16 +331,16 @@ export declare const createProjectSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     name: string;
     archived: boolean;
-    workspaceId: string;
     billable: boolean;
+    workspaceId: string;
     color: string;
     isPublic: boolean;
     template: boolean;
-    clientId?: string | undefined;
     costRate?: {
         amount: number;
         currency: string;
     } | undefined;
+    clientId?: string | undefined;
     note?: string | undefined;
     duration?: string | undefined;
     timeEstimate?: {
@@ -358,12 +358,12 @@ export declare const createProjectSchema: z.ZodObject<{
     name: string;
     workspaceId: string;
     archived?: boolean | undefined;
-    clientId?: string | undefined;
     billable?: boolean | undefined;
     costRate?: {
         amount: number;
         currency: string;
     } | undefined;
+    clientId?: string | undefined;
     color?: string | undefined;
     isPublic?: boolean | undefined;
     note?: string | undefined;
@@ -392,22 +392,22 @@ export declare const updateProjectSchema: z.ZodObject<{
     archived: z.ZodOptional<z.ZodBoolean>;
     note: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    workspaceId: string;
     projectId: string;
+    workspaceId: string;
     name?: string | undefined;
     archived?: boolean | undefined;
-    clientId?: string | undefined;
     billable?: boolean | undefined;
+    clientId?: string | undefined;
     color?: string | undefined;
     isPublic?: boolean | undefined;
     note?: string | undefined;
 }, {
-    workspaceId: string;
     projectId: string;
+    workspaceId: string;
     name?: string | undefined;
     archived?: boolean | undefined;
-    clientId?: string | undefined;
     billable?: boolean | undefined;
+    clientId?: string | undefined;
     color?: string | undefined;
     isPublic?: boolean | undefined;
     note?: string | undefined;
@@ -451,18 +451,18 @@ export declare const createTaskSchema: z.ZodObject<{
     billable: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     name: string;
+    projectId: string;
     workspaceId: string;
     status: "ACTIVE" | "DONE";
-    projectId: string;
     billable?: boolean | undefined;
     estimate?: string | undefined;
     assigneeIds?: string[] | undefined;
 }, {
     name: string;
-    workspaceId: string;
     projectId: string;
-    status?: "ACTIVE" | "DONE" | undefined;
+    workspaceId: string;
     billable?: boolean | undefined;
+    status?: "ACTIVE" | "DONE" | undefined;
     estimate?: string | undefined;
     assigneeIds?: string[] | undefined;
 }>;
@@ -480,8 +480,8 @@ export declare const reportRequestSchema: z.ZodObject<{
     workspaceId: string;
     dateRangeStart: string;
     dateRangeEnd: string;
-    tagIds?: string[] | undefined;
     billable?: "BILLABLE" | "NON_BILLABLE" | "BOTH" | undefined;
+    tagIds?: string[] | undefined;
     userIds?: string[] | undefined;
     projectIds?: string[] | undefined;
     clientIds?: string[] | undefined;
@@ -490,8 +490,8 @@ export declare const reportRequestSchema: z.ZodObject<{
     workspaceId: string;
     dateRangeStart: string;
     dateRangeEnd: string;
-    tagIds?: string[] | undefined;
     billable?: "BILLABLE" | "NON_BILLABLE" | "BOTH" | undefined;
+    tagIds?: string[] | undefined;
     userIds?: string[] | undefined;
     projectIds?: string[] | undefined;
     clientIds?: string[] | undefined;
@@ -505,19 +505,19 @@ export declare const startTimerSchema: z.ZodObject<{
     tagIds: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
     billable: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
-    workspaceId: string;
-    description: string;
     billable: boolean;
+    description: string;
+    workspaceId: string;
     projectId?: string | undefined;
     taskId?: string | undefined;
     tagIds?: string[] | undefined;
 }, {
-    workspaceId: string;
     description: string;
+    workspaceId: string;
+    billable?: boolean | undefined;
     projectId?: string | undefined;
     taskId?: string | undefined;
     tagIds?: string[] | undefined;
-    billable?: boolean | undefined;
 }>;
 export declare const stopTimerSchema: z.ZodObject<{
     workspaceId: z.ZodString;
@@ -577,16 +577,16 @@ export declare const createCustomFieldSchema: z.ZodObject<{
     onlyAdminCanEdit: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
 }, "strip", z.ZodTypeAny, {
     name: string;
-    workspaceId: string;
     type: "TEXT" | "NUMBER" | "DROPDOWN_SINGLE" | "DROPDOWN_MULTIPLE" | "CHECKBOX" | "LINK";
+    workspaceId: string;
     required: boolean;
     onlyAdminCanEdit: boolean;
     placeholder?: string | undefined;
     allowedValues?: string[] | undefined;
 }, {
     name: string;
-    workspaceId: string;
     type: "TEXT" | "NUMBER" | "DROPDOWN_SINGLE" | "DROPDOWN_MULTIPLE" | "CHECKBOX" | "LINK";
+    workspaceId: string;
     required?: boolean | undefined;
     placeholder?: string | undefined;
     allowedValues?: string[] | undefined;
@@ -627,35 +627,35 @@ export declare const bulkTimeEntriesSchema: z.ZodObject<{
         tagIds: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
         billable: z.ZodOptional<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
+        billable?: boolean | undefined;
         projectId?: string | undefined;
         taskId?: string | undefined;
         tagIds?: string[] | undefined;
-        billable?: boolean | undefined;
     }, {
+        billable?: boolean | undefined;
         projectId?: string | undefined;
         taskId?: string | undefined;
         tagIds?: string[] | undefined;
-        billable?: boolean | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     workspaceId: string;
     timeEntryIds: string[];
     action: "DELETE" | "UPDATE";
     updates?: {
+        billable?: boolean | undefined;
         projectId?: string | undefined;
         taskId?: string | undefined;
         tagIds?: string[] | undefined;
-        billable?: boolean | undefined;
     } | undefined;
 }, {
     workspaceId: string;
     timeEntryIds: string[];
     action: "DELETE" | "UPDATE";
     updates?: {
+        billable?: boolean | undefined;
         projectId?: string | undefined;
         taskId?: string | undefined;
         tagIds?: string[] | undefined;
-        billable?: boolean | undefined;
     } | undefined;
 }>;
 //# sourceMappingURL=schemas.d.ts.map
