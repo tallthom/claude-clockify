@@ -2,6 +2,12 @@
 
 A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.me), letting you log time, check running timers, and manage time entries directly from Claude.
 
+## Requirements
+
+- **Node.js v18 or later** must be installed on your machine. The extension runs a local Node.js server — Claude Desktop does not bundle a Node runtime.
+  - Download from [nodejs.org](https://nodejs.org) (choose the LTS version)
+  - To check if you already have it: open a terminal and run `node --version`
+
 ## Installation
 
 ### Claude Desktop (macOS and Windows)
