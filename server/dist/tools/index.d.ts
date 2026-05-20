@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ConfigurationManager } from '../config/index.js';
+import { RestrictionMiddleware } from '../middleware/restrictions.js';
 export declare class ClockifyTools {
     private userService;
     private workspaceService;
@@ -13,6 +14,7 @@ export declare class ClockifyTools {
     private restrictionMiddleware;
     private config;
     constructor(apiKey: string, config: ConfigurationManager);
+    getRestrictionMiddleware(): RestrictionMiddleware;
     private enrichTimeEntries;
     private isProtectedProject;
     private isConfiguredProject;

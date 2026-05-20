@@ -5,10 +5,8 @@ import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSche
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { ClockifyTools } from './tools/index.js';
 import { ConfigurationManager } from './config/index.js';
-import { RestrictionMiddleware } from './middleware/restrictions.js';
 // Initialize configuration
 const config = new ConfigurationManager();
-const restrictionMiddleware = new RestrictionMiddleware(config);
 const server = new Server({
     name: 'clockify-mcp-server',
     version: '1.0.0',
@@ -22,6 +20,7 @@ const server = new Server({
 });
 const clockifyTools = new ClockifyTools(config.getApiKey(), config);
 const tools = clockifyTools.getTools();
+const restrictionMiddleware = clockifyTools.getRestrictionMiddleware();
 // List available tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
@@ -42,8 +41,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }
     try {
         const args = request.params.arguments || {};
-        // Apply middleware restrictions and defaults
-        const processedArgs = restrictionMiddleware.applyDefaults(args);
+        // Apply middleware restrictions and defaults (async — resolves workspace ID if needed)
+        const processedArgs = await restrictionMiddleware.applyDefaults(args);
         restrictionMiddleware.validateToolAccess(request.params.name, processedArgs);
         const result = await tool.handler(processedArgs);
         return {

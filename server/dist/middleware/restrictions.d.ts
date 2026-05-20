@@ -1,12 +1,14 @@
 import { ConfigurationManager } from '../config/index.js';
+import { ClockifyApiClient } from '../api/client.js';
 export declare class RestrictionMiddleware {
     private config;
-    constructor(config: ConfigurationManager);
+    private client?;
+    constructor(config: ConfigurationManager, client?: ClockifyApiClient | undefined);
     checkProjectAccess(projectId?: string): void;
     checkWorkspaceAccess(workspaceId?: string): void;
     checkOperation(operation: string): void;
     checkTimeEntryDates(start: string, end?: string): void;
-    applyDefaults<T extends Record<string, any>>(params: T): T;
+    applyDefaults<T extends Record<string, any>>(params: T): Promise<T>;
     filterProjects<T extends {
         id: string;
     }>(projects: T[]): T[];

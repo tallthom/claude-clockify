@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "claude-clockify",
   "display_name": "Claude Clockify",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Clockify time tracking integration for Claude Desktop. Log time, check running timers, and manage time entries.",
   "author": {
     "name": "Thom Rawson",
@@ -15,7 +15,8 @@
       "command": "node",
       "args": ["${__dirname}/server/dist/index.js"],
       "env": {
-        "CLOCKIFY_API_KEY": "${user_config.clockify_api_key}"
+        "CLOCKIFY_API_KEY": "${user_config.clockify_api_key}",
+        "CLOCKIFY_WORKSPACE_ID": "${user_config.clockify_workspace_id}"
       }
     }
   },
@@ -26,6 +27,13 @@
       "description": "Your personal API key from app.clockify.me → Profile Settings → API section.",
       "sensitive": true,
       "required": true
+    },
+    "clockify_workspace_id": {
+      "type": "string",
+      "title": "Workspace ID (optional)",
+      "description": "Leave blank to auto-detect your first workspace. Only set this if you have multiple Clockify workspaces and need a specific one.",
+      "sensitive": false,
+      "required": false
     }
   }
 }

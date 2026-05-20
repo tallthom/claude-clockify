@@ -1,8 +1,10 @@
 import { ConfigurationManager } from '../config/index.js';
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { ClockifyApiClient } from '../api/client.js';
+import { resolveWorkspaceId } from '../api/workspaceResolver.js';
 
 export class RestrictionMiddleware {
-  constructor(private config: ConfigurationManager) {}
+  constructor(private config: ConfigurationManager, private client?: ClockifyApiClient) {}
 
   checkProjectAccess(projectId?: string): void {
     if (!projectId) return;
@@ -45,12 +47,16 @@ export class RestrictionMiddleware {
     }
   }
 
-  applyDefaults<T extends Record<string, any>>(params: T): T {
+  async applyDefaults<T extends Record<string, any>>(params: T): Promise<T> {
     const result = { ...params };
 
-    // Apply default workspace if not specified
-    if (!result.workspaceId && this.config.getDefaultWorkspaceId()) {
-      (result as any).workspaceId = this.config.getDefaultWorkspaceId();
+    // Apply default workspace if not specified — auto-detect via API if no env override
+    if (!result.workspaceId) {
+      if (this.client) {
+        (result as any).workspaceId = await resolveWorkspaceId(this.client);
+      } else if (this.config.getDefaultWorkspaceId()) {
+        (result as any).workspaceId = this.config.getDefaultWorkspaceId();
+      }
     }
 
     // Apply default project if not specified

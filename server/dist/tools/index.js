@@ -40,8 +40,11 @@ export class ClockifyTools {
         this.taskService = new TaskService(client);
         this.reportService = new ReportService(client);
         this.customFieldService = new CustomFieldService(client);
-        this.restrictionMiddleware = new RestrictionMiddleware(config);
+        this.restrictionMiddleware = new RestrictionMiddleware(config, client);
         this.config = config;
+    }
+    getRestrictionMiddleware() {
+        return this.restrictionMiddleware;
     }
     async enrichTimeEntries(workspaceId, entries) {
         if (entries.length === 0)

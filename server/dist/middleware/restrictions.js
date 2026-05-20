@@ -1,8 +1,11 @@
 import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { resolveWorkspaceId } from '../api/workspaceResolver.js';
 export class RestrictionMiddleware {
     config;
-    constructor(config) {
+    client;
+    constructor(config, client) {
         this.config = config;
+        this.client = client;
     }
     checkProjectAccess(projectId) {
         if (!projectId)
@@ -31,11 +34,16 @@ export class RestrictionMiddleware {
             throw new McpError(ErrorCode.InvalidRequest, validation.error || 'Time entry validation failed');
         }
     }
-    applyDefaults(params) {
+    async applyDefaults(params) {
         const result = { ...params };
-        // Apply default workspace if not specified
-        if (!result.workspaceId && this.config.getDefaultWorkspaceId()) {
-            result.workspaceId = this.config.getDefaultWorkspaceId();
+        // Apply default workspace if not specified — auto-detect via API if no env override
+        if (!result.workspaceId) {
+            if (this.client) {
+                result.workspaceId = await resolveWorkspaceId(this.client);
+            }
+            else if (this.config.getDefaultWorkspaceId()) {
+                result.workspaceId = this.config.getDefaultWorkspaceId();
+            }
         }
         // Apply default project if not specified
         if (!result.projectId && this.config.getDefaultProjectId()) {
