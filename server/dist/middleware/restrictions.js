@@ -26,14 +26,6 @@ export class RestrictionMiddleware {
             throw new McpError(ErrorCode.InvalidRequest, `Operation '${operation}' is not allowed with current restrictions`);
         }
     }
-    checkTimeEntryDates(start, end) {
-        const startDate = new Date(start);
-        const endDate = end ? new Date(end) : undefined;
-        const validation = this.config.validateTimeEntry(startDate, endDate);
-        if (!validation.valid) {
-            throw new McpError(ErrorCode.InvalidRequest, validation.error || 'Time entry validation failed');
-        }
-    }
     async applyDefaults(params) {
         const result = { ...params };
         // Apply default workspace if not specified — auto-detect via API if no env override
@@ -86,9 +78,6 @@ export class RestrictionMiddleware {
         switch (toolName) {
             case 'create_time_entry':
                 this.checkOperation('createTimeEntry');
-                if (params.start) {
-                    this.checkTimeEntryDates(params.start, params.end);
-                }
                 break;
             case 'delete_time_entry':
             case 'bulk_edit_time_entries':

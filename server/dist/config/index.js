@@ -34,19 +34,6 @@ export const ConfigSchema = z.object({
             .describe('Allow creating/updating/deleting projects'),
         allowClientManagement: z.boolean().default(true).describe('Allow managing clients'),
         allowUserManagement: z.boolean().default(false).describe('Allow managing users'),
-        // Time restrictions
-        maxTimeEntryDuration: z
-            .number()
-            .optional()
-            .describe('Maximum duration for a single time entry in hours'),
-        allowFutureTimeEntries: z
-            .boolean()
-            .default(false)
-            .describe('Allow creating time entries in the future'),
-        allowPastTimeEntriesInDays: z
-            .number()
-            .default(30)
-            .describe('How many days in the past time entries can be created/edited'),
     })
         .default(() => ({
         readOnly: false,
@@ -55,8 +42,6 @@ export const ConfigSchema = z.object({
         allowProjectManagement: true,
         allowClientManagement: true,
         allowUserManagement: false,
-        allowFutureTimeEntries: false,
-        allowPastTimeEntriesInDays: 30,
     })),
     // Caching
     cacheEnabled: z.boolean().default(true).describe('Enable caching for API responses'),
@@ -182,16 +167,6 @@ export class ConfigurationManager {
         if (process.env.ALLOW_USER_MANAGEMENT !== undefined) {
             restrictions.allowUserManagement = process.env.ALLOW_USER_MANAGEMENT === 'true';
         }
-        // Parse time restrictions
-        if (process.env.MAX_TIME_ENTRY_DURATION) {
-            restrictions.maxTimeEntryDuration = parseFloat(process.env.MAX_TIME_ENTRY_DURATION);
-        }
-        if (process.env.ALLOW_FUTURE_TIME_ENTRIES !== undefined) {
-            restrictions.allowFutureTimeEntries = process.env.ALLOW_FUTURE_TIME_ENTRIES === 'true';
-        }
-        if (process.env.ALLOW_PAST_TIME_ENTRIES_IN_DAYS) {
-            restrictions.allowPastTimeEntriesInDays = parseInt(process.env.ALLOW_PAST_TIME_ENTRIES_IN_DAYS);
-        }
         return restrictions;
     }
     get() {
@@ -269,33 +244,6 @@ export class ConfigurationManager {
     }
     getDefaultWorkspaceId() {
         return this.config.restrictions.defaultWorkspaceId;
-    }
-    validateTimeEntry(start, end) {
-        const restrictions = this.config.restrictions;
-        // Check future entries
-        if (!restrictions.allowFutureTimeEntries && start > new Date()) {
-            return { valid: false, error: 'Future time entries are not allowed' };
-        }
-        // Check past entries
-        const maxPastDate = new Date();
-        maxPastDate.setDate(maxPastDate.getDate() - restrictions.allowPastTimeEntriesInDays);
-        if (start < maxPastDate) {
-            return {
-                valid: false,
-                error: `Time entries older than ${restrictions.allowPastTimeEntriesInDays} days are not allowed`,
-            };
-        }
-        // Check duration
-        if (end && restrictions.maxTimeEntryDuration) {
-            const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-            if (durationHours > restrictions.maxTimeEntryDuration) {
-                return {
-                    valid: false,
-                    error: `Time entry duration exceeds maximum of ${restrictions.maxTimeEntryDuration} hours`,
-                };
-            }
-        }
-        return { valid: true };
     }
 }
 // Export singleton instance

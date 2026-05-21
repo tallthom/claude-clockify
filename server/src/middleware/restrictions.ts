@@ -34,19 +34,6 @@ export class RestrictionMiddleware {
     }
   }
 
-  checkTimeEntryDates(start: string, end?: string): void {
-    const startDate = new Date(start);
-    const endDate = end ? new Date(end) : undefined;
-
-    const validation = this.config.validateTimeEntry(startDate, endDate);
-    if (!validation.valid) {
-      throw new McpError(
-        ErrorCode.InvalidRequest,
-        validation.error || 'Time entry validation failed'
-      );
-    }
-  }
-
   async applyDefaults<T extends Record<string, any>>(params: T): Promise<T> {
     const result = { ...params };
 
@@ -116,9 +103,6 @@ export class RestrictionMiddleware {
     switch (toolName) {
       case 'create_time_entry':
         this.checkOperation('createTimeEntry');
-        if (params.start) {
-          this.checkTimeEntryDates(params.start, params.end);
-        }
         break;
       case 'delete_time_entry':
       case 'bulk_edit_time_entries':

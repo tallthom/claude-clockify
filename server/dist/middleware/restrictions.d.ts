@@ -7,7 +7,6 @@ export declare class RestrictionMiddleware {
     checkProjectAccess(projectId?: string): void;
     checkWorkspaceAccess(workspaceId?: string): void;
     checkOperation(operation: string): void;
-    checkTimeEntryDates(start: string, end?: string): void;
     applyDefaults<T extends Record<string, any>>(params: T): Promise<T>;
     filterProjects<T extends {
         id: string;

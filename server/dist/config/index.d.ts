@@ -15,9 +15,6 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement: z.ZodDefault<z.ZodBoolean>;
         allowClientManagement: z.ZodDefault<z.ZodBoolean>;
         allowUserManagement: z.ZodDefault<z.ZodBoolean>;
-        maxTimeEntryDuration: z.ZodOptional<z.ZodNumber>;
-        allowFutureTimeEntries: z.ZodDefault<z.ZodBoolean>;
-        allowPastTimeEntriesInDays: z.ZodDefault<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
         readOnly: boolean;
         allowTimeEntryCreation: boolean;
@@ -25,14 +22,11 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement: boolean;
         allowClientManagement: boolean;
         allowUserManagement: boolean;
-        allowFutureTimeEntries: boolean;
-        allowPastTimeEntriesInDays: number;
         allowedProjects?: string[] | undefined;
         deniedProjects?: string[] | undefined;
         defaultProjectId?: string | undefined;
         allowedWorkspaces?: string[] | undefined;
         defaultWorkspaceId?: string | undefined;
-        maxTimeEntryDuration?: number | undefined;
     }, {
         allowedProjects?: string[] | undefined;
         deniedProjects?: string[] | undefined;
@@ -45,9 +39,6 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement?: boolean | undefined;
         allowClientManagement?: boolean | undefined;
         allowUserManagement?: boolean | undefined;
-        maxTimeEntryDuration?: number | undefined;
-        allowFutureTimeEntries?: boolean | undefined;
-        allowPastTimeEntriesInDays?: number | undefined;
     }>>;
     cacheEnabled: z.ZodDefault<z.ZodBoolean>;
     cacheTTLSeconds: z.ZodDefault<z.ZodNumber>;
@@ -81,14 +72,11 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement: boolean;
         allowClientManagement: boolean;
         allowUserManagement: boolean;
-        allowFutureTimeEntries: boolean;
-        allowPastTimeEntriesInDays: number;
         allowedProjects?: string[] | undefined;
         deniedProjects?: string[] | undefined;
         defaultProjectId?: string | undefined;
         allowedWorkspaces?: string[] | undefined;
         defaultWorkspaceId?: string | undefined;
-        maxTimeEntryDuration?: number | undefined;
     };
     cacheEnabled: boolean;
     cacheTTLSeconds: number;
@@ -117,9 +105,6 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement?: boolean | undefined;
         allowClientManagement?: boolean | undefined;
         allowUserManagement?: boolean | undefined;
-        maxTimeEntryDuration?: number | undefined;
-        allowFutureTimeEntries?: boolean | undefined;
-        allowPastTimeEntriesInDays?: number | undefined;
     } | undefined;
     cacheEnabled?: boolean | undefined;
     cacheTTLSeconds?: number | undefined;
@@ -150,10 +135,6 @@ export declare class ConfigurationManager {
     getTimezone(): string;
     getDefaultProjectId(): string | undefined;
     getDefaultWorkspaceId(): string | undefined;
-    validateTimeEntry(start: Date, end?: Date): {
-        valid: boolean;
-        error?: string;
-    };
 }
 export declare const config: ConfigurationManager;
 //# sourceMappingURL=index.d.ts.map
