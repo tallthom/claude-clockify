@@ -7,6 +7,9 @@ export class ClockifyApiClient {
         if (!apiKey) {
             throw new Error('Clockify API key is required');
         }
+        if (!baseUrl.startsWith('https://')) {
+            throw new Error('Clockify API URL must use HTTPS');
+        }
         this.apiKey = apiKey;
         this.baseUrl = baseUrl;
         this.api = axios.create({

@@ -2,7 +2,11 @@ import { z } from 'zod';
 
 export const ConfigSchema = z.object({
   apiKey: z.string().min(1, 'API key is required'),
-  apiUrl: z.string().url().default('https://api.clockify.me/api/v1'),
+  apiUrl: z
+    .string()
+    .url()
+    .refine(u => u.startsWith('https://'), { message: 'API URL must use HTTPS' })
+    .default('https://api.clockify.me/api/v1'),
   region: z.enum(['global', 'eu', 'us']).default('global').describe('Clockify API region'),
   restrictions: z
     .object({

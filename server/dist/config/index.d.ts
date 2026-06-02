@@ -1,7 +1,7 @@
 import { z } from 'zod';
 export declare const ConfigSchema: z.ZodObject<{
     apiKey: z.ZodString;
-    apiUrl: z.ZodDefault<z.ZodString>;
+    apiUrl: z.ZodDefault<z.ZodEffects<z.ZodString, string, string>>;
     region: z.ZodDefault<z.ZodEnum<["global", "eu", "us"]>>;
     restrictions: z.ZodDefault<z.ZodObject<{
         allowedProjects: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
