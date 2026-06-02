@@ -122,6 +122,7 @@ export type Config = z.infer<typeof ConfigSchema>;
 export declare class ConfigurationManager {
     private config;
     constructor(overrides?: Partial<Config>);
+    private warnUnimplementedSettings;
     private parseToolFiltering;
     private parseRestrictions;
     get(): Config;

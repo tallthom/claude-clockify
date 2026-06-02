@@ -112,6 +112,21 @@ export class ConfigurationManager {
             throw new Error(`Configuration validation failed: ${result.error.message}`);
         }
         this.config = result.data;
+        this.warnUnimplementedSettings();
+    }
+    warnUnimplementedSettings() {
+        const unimplemented = [];
+        if (process.env.RATE_LIMIT)
+            unimplemented.push('RATE_LIMIT');
+        if (process.env.CACHE_ENABLED)
+            unimplemented.push('CACHE_ENABLED');
+        if (process.env.CACHE_TTL)
+            unimplemented.push('CACHE_TTL');
+        if (process.env.LOG_LEVEL)
+            unimplemented.push('LOG_LEVEL');
+        if (unimplemented.length > 0) {
+            console.warn(`[clockify-mcp] Warning: ${unimplemented.join(', ')} ${unimplemented.length === 1 ? 'is' : 'are'} set but not yet enforced.`);
+        }
     }
     parseToolFiltering() {
         const toolFiltering = {};
