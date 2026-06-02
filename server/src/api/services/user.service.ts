@@ -51,8 +51,7 @@ export class UserService {
   }
 
   async findUserByName(workspaceId: string, name: string): Promise<ClockifyUser[]> {
-    const users = await this.getAllUsers(workspaceId);
-    return users.filter(user => user.name.toLowerCase().includes(name.toLowerCase()));
+    return this.getAllUsers(workspaceId, { name });
   }
 
   async addUserToWorkspace(workspaceId: string, email: string): Promise<ClockifyUser> {
