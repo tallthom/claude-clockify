@@ -83,9 +83,10 @@ export const ConfigSchema = z.object({
             'report',
             'bulk',
             'search',
+            'customField',
           ])
         )
-        .default(['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search'])
+        .default(['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search', 'customField'])
         .describe('Categories of tools to enable'),
       enabledTools: z
         .array(z.string())
@@ -95,7 +96,7 @@ export const ConfigSchema = z.object({
       maxTools: z.number().default(50).describe('Maximum number of tools to expose'),
     })
     .default(() => ({
-      enabledCategories: ['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search'] as (
+      enabledCategories: ['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search', 'customField'] as (
         | 'user'
         | 'workspace'
         | 'project'
@@ -106,6 +107,7 @@ export const ConfigSchema = z.object({
         | 'report'
         | 'bulk'
         | 'search'
+        | 'customField'
       )[],
       maxTools: 50,
     })),
