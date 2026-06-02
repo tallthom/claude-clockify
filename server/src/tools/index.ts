@@ -324,6 +324,10 @@ export class ClockifyTools {
         description: 'Delete a workspace',
         inputSchema: schemas.workspaceIdSchema,
         handler: async (input: z.infer<typeof schemas.workspaceIdSchema>) => {
+          if (!this.config.canPerformOperation('deleteWorkspace')) {
+            throw new Error('Workspace deletion is disabled. Set ALLOW_WORKSPACE_DELETION=true to enable it.');
+          }
+
           // Absolute protection: never allow deleting workspace with configured projects
           const restrictions = this.config.getRestrictions();
           const defaultProjectId = this.config.getDefaultProjectId();

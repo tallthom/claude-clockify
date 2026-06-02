@@ -43,6 +43,7 @@ export const ConfigSchema = z.object({
         .describe('Allow creating/updating/deleting projects'),
       allowClientManagement: z.boolean().default(true).describe('Allow managing clients'),
       allowUserManagement: z.boolean().default(false).describe('Allow managing users'),
+      allowWorkspaceDeletion: z.boolean().default(false).describe('Allow deleting workspaces'),
 
     })
     .default(() => ({
@@ -52,6 +53,7 @@ export const ConfigSchema = z.object({
       allowProjectManagement: true,
       allowClientManagement: true,
       allowUserManagement: false,
+      allowWorkspaceDeletion: false,
     })),
 
   // Caching
@@ -234,6 +236,9 @@ export class ConfigurationManager {
     if (process.env.ALLOW_USER_MANAGEMENT) {
       restrictions.allowUserManagement = process.env.ALLOW_USER_MANAGEMENT === 'true';
     }
+    if (process.env.ALLOW_WORKSPACE_DELETION) {
+      restrictions.allowWorkspaceDeletion = process.env.ALLOW_WORKSPACE_DELETION === 'true';
+    }
 
     return restrictions;
   }
@@ -317,6 +322,8 @@ export class ConfigurationManager {
         return restrictions.allowClientManagement;
       case 'manageUser':
         return restrictions.allowUserManagement;
+      case 'deleteWorkspace':
+        return restrictions.allowWorkspaceDeletion ?? false;
       default:
         return true;
     }
