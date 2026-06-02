@@ -169,11 +169,23 @@ export class TimeEntryService {
     start: string,
     end: string
   ): Promise<ClockifyTimeEntry[]> {
-    return this.getTimeEntriesForUser(workspaceId, userId, {
-      start,
-      end,
-      'page-size': 200,
-    });
+    const pageSize = 1000;
+    const all: ClockifyTimeEntry[] = [];
+    let page = 1;
+
+    while (true) {
+      const batch = await this.getTimeEntriesForUser(workspaceId, userId, {
+        start,
+        end,
+        'page-size': pageSize,
+        page,
+      });
+      all.push(...batch);
+      if (batch.length < pageSize) break;
+      page++;
+    }
+
+    return all;
   }
 
   async getTodayTimeEntries(workspaceId: string, userId: string): Promise<ClockifyTimeEntry[]> {

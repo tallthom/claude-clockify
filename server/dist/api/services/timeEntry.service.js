@@ -62,11 +62,22 @@ export class TimeEntryService {
         });
     }
     async getTimeEntriesInRange(workspaceId, userId, start, end) {
-        return this.getTimeEntriesForUser(workspaceId, userId, {
-            start,
-            end,
-            'page-size': 200,
-        });
+        const pageSize = 1000;
+        const all = [];
+        let page = 1;
+        while (true) {
+            const batch = await this.getTimeEntriesForUser(workspaceId, userId, {
+                start,
+                end,
+                'page-size': pageSize,
+                page,
+            });
+            all.push(...batch);
+            if (batch.length < pageSize)
+                break;
+            page++;
+        }
+        return all;
     }
     async getTodayTimeEntries(workspaceId, userId) {
         const today = utcDateString(new Date());
