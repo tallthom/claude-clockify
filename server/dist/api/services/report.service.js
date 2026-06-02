@@ -85,10 +85,10 @@ export class ReportService {
         });
     }
     async getDailyTimeReport(workspaceId, userId, date) {
-        const startOfDay = new Date(date);
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(date);
-        endOfDay.setHours(23, 59, 59, 999);
+        // date is expected as "YYYY-MM-DD"; build UTC boundaries directly to avoid local-time shift
+        const datePart = date.slice(0, 10);
+        const startOfDay = new Date(`${datePart}T00:00:00.000Z`);
+        const endOfDay = new Date(`${datePart}T23:59:59.999Z`);
         return this.getDetailedReport(workspaceId, {
             dateRangeStart: startOfDay.toISOString(),
             dateRangeEnd: endOfDay.toISOString(),
@@ -103,8 +103,8 @@ export class ReportService {
         });
     }
     async getMonthlyHoursReport(workspaceId, year, month) {
-        const startOfMonth = new Date(year, month, 1);
-        const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
+        const startOfMonth = new Date(Date.UTC(year, month, 1));
+        const endOfMonth = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
         return this.getSummaryReport(workspaceId, {
             dateRangeStart: startOfMonth.toISOString(),
             dateRangeEnd: endOfMonth.toISOString(),
