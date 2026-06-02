@@ -67,15 +67,21 @@ export class RestrictionMiddleware {
             this.checkProjectAccess(params.projectId);
         }
         // Check operation permissions based on tool name
-        if (toolName.startsWith('create_') ||
+        const isWriteTool = toolName.startsWith('create_') ||
             toolName.startsWith('update_') ||
-            toolName.startsWith('delete_')) {
-            if (this.config.getRestrictions().readOnly) {
-                throw new McpError(ErrorCode.InvalidRequest, 'Write operations are not allowed in read-only mode');
-            }
+            toolName.startsWith('delete_') ||
+            toolName === 'start_timer' ||
+            toolName === 'stop_timer' ||
+            toolName === 'duplicate_time_entry' ||
+            toolName === 'archive_project';
+        if (isWriteTool && this.config.getRestrictions().readOnly) {
+            throw new McpError(ErrorCode.InvalidRequest, 'Write operations are not allowed in read-only mode');
         }
         // Specific tool checks
         switch (toolName) {
+            case 'start_timer':
+            case 'stop_timer':
+            case 'duplicate_time_entry':
             case 'create_time_entry':
                 this.checkOperation('createTimeEntry');
                 break;
@@ -83,11 +89,13 @@ export class RestrictionMiddleware {
             case 'bulk_edit_time_entries':
                 this.checkOperation('deleteTimeEntry');
                 break;
+            case 'delete_project':
             case 'create_project':
             case 'update_project':
             case 'archive_project':
                 this.checkOperation('manageProject');
                 break;
+            case 'delete_client':
             case 'create_client':
             case 'update_client':
                 this.checkOperation('manageClient');
