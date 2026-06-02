@@ -663,7 +663,7 @@ export class ClockifyTools {
                 data.projectId = existing.projectId;
               }
             } catch (error) {
-              // If we can't fetch existing entry, proceed without project preservation
+              console.error('[claude-clockify] Could not fetch existing time entry for projectId preservation:', error instanceof Error ? error.message : String(error));
             }
           }
 
