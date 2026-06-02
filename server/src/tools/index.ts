@@ -690,7 +690,7 @@ export class ClockifyTools {
         priority: 2,
         description: 'Get time entries for a user',
         inputSchema: schemas.workspaceIdSchema.extend({
-          userId: z.string().describe('The user ID'),
+          userId: schemas.objectIdSchema.describe('The user ID'),
           start: z.string().optional().describe('Start date in ISO format'),
           end: z.string().optional().describe('End date in ISO format'),
           projectId: z.string().optional().describe('Filter by project ID'),
@@ -827,7 +827,7 @@ export class ClockifyTools {
         priority: 9,
         description: 'Get all time entries for a specific month',
         inputSchema: schemas.workspaceIdSchema.extend({
-          userId: z.string().describe('The user ID'),
+          userId: schemas.objectIdSchema.describe('The user ID'),
           year: z.number().optional().describe('Year (defaults to current year)'),
           month: z.number().optional().describe('Month (0-11, defaults to current month)'),
         }),
@@ -1072,7 +1072,7 @@ export class ClockifyTools {
         priority: 2,
         description: 'Get productivity report for a specific user',
         inputSchema: schemas.workspaceIdSchema.extend({
-          userId: z.string().describe('The user ID'),
+          userId: schemas.objectIdSchema.describe('The user ID'),
           start: z.string().describe('Start date in ISO format'),
           end: z.string().describe('End date in ISO format'),
         }),
