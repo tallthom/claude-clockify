@@ -97,8 +97,8 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
     } else if (error.message.includes('restricted') || error.message.includes('not allowed')) {
       throw new McpError(ErrorCode.InvalidRequest, error.message);
     } else {
-      console.error('Unexpected error:', error);
-      throw new McpError(ErrorCode.InternalError, `Tool execution failed: ${error.message}`);
+      console.error('Unexpected error:', error instanceof Error ? error.message : String(error));
+      throw new McpError(ErrorCode.InternalError, 'Tool execution failed. Check server logs for details.');
     }
   }
 });
