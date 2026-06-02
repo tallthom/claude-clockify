@@ -265,6 +265,4 @@ export class ConfigurationManager {
         return this.config.restrictions.defaultWorkspaceId;
     }
 }
-// Export singleton instance
-export const config = new ConfigurationManager();
 //# sourceMappingURL=index.js.map

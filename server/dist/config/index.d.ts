@@ -137,5 +137,4 @@ export declare class ConfigurationManager {
     getDefaultProjectId(): string | undefined;
     getDefaultWorkspaceId(): string | undefined;
 }
-export declare const config: ConfigurationManager;
 //# sourceMappingURL=index.d.ts.map

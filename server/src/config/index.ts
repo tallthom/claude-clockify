@@ -333,6 +333,3 @@ export class ConfigurationManager {
   }
 
 }
-
-// Export singleton instance
-export const config = new ConfigurationManager();
