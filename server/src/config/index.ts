@@ -127,7 +127,7 @@ export class ConfigurationManager {
       timezone: process.env.CLOCKIFY_TIMEZONE || systemTimezone,
       restrictions: this.parseRestrictions(),
       toolFiltering: this.parseToolFiltering(),
-      cacheEnabled: process.env.CACHE_ENABLED === 'true',
+      cacheEnabled: process.env.CACHE_ENABLED !== undefined ? process.env.CACHE_ENABLED === 'true' : undefined,
       cacheTTLSeconds: process.env.CACHE_TTL ? parseInt(process.env.CACHE_TTL) : undefined,
       rateLimitPerMinute: process.env.RATE_LIMIT ? parseInt(process.env.RATE_LIMIT) : undefined,
       logLevel: process.env.LOG_LEVEL as any,
