@@ -20,8 +20,7 @@ export class UserService {
         return users.length > 0 ? users[0] : null;
     }
     async findUserByName(workspaceId, name) {
-        const users = await this.getAllUsers(workspaceId);
-        return users.filter(user => user.name.toLowerCase().includes(name.toLowerCase()));
+        return this.getAllUsers(workspaceId, { name });
     }
     async addUserToWorkspace(workspaceId, email) {
         return this.client.post(`/workspaces/${workspaceId}/users`, { email });

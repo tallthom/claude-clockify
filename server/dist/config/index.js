@@ -38,6 +38,7 @@ export const ConfigSchema = z.object({
             .describe('Allow creating/updating/deleting projects'),
         allowClientManagement: z.boolean().default(true).describe('Allow managing clients'),
         allowUserManagement: z.boolean().default(false).describe('Allow managing users'),
+        allowWorkspaceDeletion: z.boolean().default(false).describe('Allow deleting workspaces'),
     })
         .default(() => ({
         readOnly: false,
@@ -46,6 +47,7 @@ export const ConfigSchema = z.object({
         allowProjectManagement: true,
         allowClientManagement: true,
         allowUserManagement: false,
+        allowWorkspaceDeletion: false,
     })),
     // Caching
     cacheEnabled: z.boolean().default(true).describe('Enable caching for API responses'),
@@ -71,8 +73,9 @@ export const ConfigSchema = z.object({
             'report',
             'bulk',
             'search',
+            'customField',
         ]))
-            .default(['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search'])
+            .default(['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search', 'customField'])
             .describe('Categories of tools to enable'),
         enabledTools: z
             .array(z.string())
@@ -82,7 +85,7 @@ export const ConfigSchema = z.object({
         maxTools: z.number().default(50).describe('Maximum number of tools to expose'),
     })
         .default(() => ({
-        enabledCategories: ['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search'],
+        enabledCategories: ['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search', 'customField'],
         maxTools: 50,
     })),
 });
@@ -97,7 +100,7 @@ export class ConfigurationManager {
             timezone: process.env.CLOCKIFY_TIMEZONE || systemTimezone,
             restrictions: this.parseRestrictions(),
             toolFiltering: this.parseToolFiltering(),
-            cacheEnabled: process.env.CACHE_ENABLED === 'true',
+            cacheEnabled: process.env.CACHE_ENABLED !== undefined ? process.env.CACHE_ENABLED === 'true' : undefined,
             cacheTTLSeconds: process.env.CACHE_TTL ? parseInt(process.env.CACHE_TTL) : undefined,
             rateLimitPerMinute: process.env.RATE_LIMIT ? parseInt(process.env.RATE_LIMIT) : undefined,
             logLevel: process.env.LOG_LEVEL,
@@ -186,6 +189,9 @@ export class ConfigurationManager {
         if (process.env.ALLOW_USER_MANAGEMENT) {
             restrictions.allowUserManagement = process.env.ALLOW_USER_MANAGEMENT === 'true';
         }
+        if (process.env.ALLOW_WORKSPACE_DELETION) {
+            restrictions.allowWorkspaceDeletion = process.env.ALLOW_WORKSPACE_DELETION === 'true';
+        }
         return restrictions;
     }
     get() {
@@ -251,6 +257,8 @@ export class ConfigurationManager {
                 return restrictions.allowClientManagement;
             case 'manageUser':
                 return restrictions.allowUserManagement;
+            case 'deleteWorkspace':
+                return restrictions.allowWorkspaceDeletion ?? false;
             default:
                 return true;
         }

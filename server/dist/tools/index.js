@@ -258,6 +258,9 @@ export class ClockifyTools {
                 description: 'Delete a workspace',
                 inputSchema: schemas.workspaceIdSchema,
                 handler: async (input) => {
+                    if (!this.config.canPerformOperation('deleteWorkspace')) {
+                        throw new Error('Workspace deletion is disabled. Set ALLOW_WORKSPACE_DELETION=true to enable it.');
+                    }
                     // Absolute protection: never allow deleting workspace with configured projects
                     const restrictions = this.config.getRestrictions();
                     const defaultProjectId = this.config.getDefaultProjectId();
@@ -546,7 +549,7 @@ export class ClockifyTools {
                             }
                         }
                         catch (error) {
-                            // If we can't fetch existing entry, proceed without project preservation
+                            console.error('[claude-clockify] Could not fetch existing time entry for projectId preservation:', error instanceof Error ? error.message : String(error));
                         }
                     }
                     const entry = await this.timeEntryService.updateTimeEntry(workspaceId, timeEntryId, data);
@@ -572,7 +575,7 @@ export class ClockifyTools {
                 priority: 2,
                 description: 'Get time entries for a user',
                 inputSchema: schemas.workspaceIdSchema.extend({
-                    userId: z.string().describe('The user ID'),
+                    userId: schemas.objectIdSchema.describe('The user ID'),
                     start: z.string().optional().describe('Start date in ISO format'),
                     end: z.string().optional().describe('End date in ISO format'),
                     projectId: z.string().optional().describe('Filter by project ID'),
@@ -690,7 +693,7 @@ export class ClockifyTools {
                 priority: 9,
                 description: 'Get all time entries for a specific month',
                 inputSchema: schemas.workspaceIdSchema.extend({
-                    userId: z.string().describe('The user ID'),
+                    userId: schemas.objectIdSchema.describe('The user ID'),
                     year: z.number().optional().describe('Year (defaults to current year)'),
                     month: z.number().optional().describe('Month (0-11, defaults to current month)'),
                 }),
@@ -903,7 +906,7 @@ export class ClockifyTools {
                 priority: 2,
                 description: 'Get productivity report for a specific user',
                 inputSchema: schemas.workspaceIdSchema.extend({
-                    userId: z.string().describe('The user ID'),
+                    userId: schemas.objectIdSchema.describe('The user ID'),
                     start: z.string().describe('Start date in ISO format'),
                     end: z.string().describe('End date in ISO format'),
                 }),

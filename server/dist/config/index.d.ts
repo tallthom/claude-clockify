@@ -15,6 +15,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement: z.ZodDefault<z.ZodBoolean>;
         allowClientManagement: z.ZodDefault<z.ZodBoolean>;
         allowUserManagement: z.ZodDefault<z.ZodBoolean>;
+        allowWorkspaceDeletion: z.ZodDefault<z.ZodBoolean>;
     }, "strip", z.ZodTypeAny, {
         readOnly: boolean;
         allowTimeEntryCreation: boolean;
@@ -22,6 +23,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement: boolean;
         allowClientManagement: boolean;
         allowUserManagement: boolean;
+        allowWorkspaceDeletion: boolean;
         allowedProjects?: string[] | undefined;
         deniedProjects?: string[] | undefined;
         defaultProjectId?: string | undefined;
@@ -39,6 +41,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement?: boolean | undefined;
         allowClientManagement?: boolean | undefined;
         allowUserManagement?: boolean | undefined;
+        allowWorkspaceDeletion?: boolean | undefined;
     }>>;
     cacheEnabled: z.ZodDefault<z.ZodBoolean>;
     cacheTTLSeconds: z.ZodDefault<z.ZodNumber>;
@@ -46,17 +49,17 @@ export declare const ConfigSchema: z.ZodObject<{
     timezone: z.ZodDefault<z.ZodString>;
     logLevel: z.ZodDefault<z.ZodEnum<["debug", "info", "warn", "error"]>>;
     toolFiltering: z.ZodDefault<z.ZodObject<{
-        enabledCategories: z.ZodDefault<z.ZodArray<z.ZodEnum<["user", "workspace", "project", "client", "timeEntry", "tag", "task", "report", "bulk", "search"]>, "many">>;
+        enabledCategories: z.ZodDefault<z.ZodArray<z.ZodEnum<["user", "workspace", "project", "client", "timeEntry", "tag", "task", "report", "bulk", "search", "customField"]>, "many">>;
         enabledTools: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
         disabledTools: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
         maxTools: z.ZodDefault<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
-        enabledCategories: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search")[];
+        enabledCategories: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search" | "customField")[];
         maxTools: number;
         enabledTools?: string[] | undefined;
         disabledTools?: string[] | undefined;
     }, {
-        enabledCategories?: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search")[] | undefined;
+        enabledCategories?: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search" | "customField")[] | undefined;
         enabledTools?: string[] | undefined;
         disabledTools?: string[] | undefined;
         maxTools?: number | undefined;
@@ -72,6 +75,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement: boolean;
         allowClientManagement: boolean;
         allowUserManagement: boolean;
+        allowWorkspaceDeletion: boolean;
         allowedProjects?: string[] | undefined;
         deniedProjects?: string[] | undefined;
         defaultProjectId?: string | undefined;
@@ -84,7 +88,7 @@ export declare const ConfigSchema: z.ZodObject<{
     timezone: string;
     logLevel: "debug" | "info" | "warn" | "error";
     toolFiltering: {
-        enabledCategories: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search")[];
+        enabledCategories: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search" | "customField")[];
         maxTools: number;
         enabledTools?: string[] | undefined;
         disabledTools?: string[] | undefined;
@@ -105,6 +109,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowProjectManagement?: boolean | undefined;
         allowClientManagement?: boolean | undefined;
         allowUserManagement?: boolean | undefined;
+        allowWorkspaceDeletion?: boolean | undefined;
     } | undefined;
     cacheEnabled?: boolean | undefined;
     cacheTTLSeconds?: number | undefined;
@@ -112,7 +117,7 @@ export declare const ConfigSchema: z.ZodObject<{
     timezone?: string | undefined;
     logLevel?: "debug" | "info" | "warn" | "error" | undefined;
     toolFiltering?: {
-        enabledCategories?: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search")[] | undefined;
+        enabledCategories?: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search" | "customField")[] | undefined;
         enabledTools?: string[] | undefined;
         disabledTools?: string[] | undefined;
         maxTools?: number | undefined;

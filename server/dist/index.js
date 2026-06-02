@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import 'dotenv/config';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema, ListPromptsRequestSchema, GetPromptRequestSchema, ErrorCode, McpError, } from '@modelcontextprotocol/sdk/types.js';
@@ -187,7 +188,7 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
                         role: 'user',
                         content: {
                             type: 'text',
-                            text: `Start tracking time with description: "${args.description}"${args.project ? ` for project: "${args.project}"` : ''}. First, get the current user and their active workspace, then find the project if specified, and create a time entry.`,
+                            text: `Start tracking time. Description: ${JSON.stringify(String(args.description ?? ''))}${args.project ? `. Project: ${JSON.stringify(String(args.project))}` : ''}. First, get the current user and their active workspace, then find the project if specified, and create a time entry.`,
                         },
                     },
                 ],
