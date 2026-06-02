@@ -171,19 +171,19 @@ export class ConfigurationManager {
         if (process.env.READ_ONLY) {
             restrictions.readOnly = process.env.READ_ONLY === 'true';
         }
-        if (process.env.ALLOW_TIME_ENTRY_CREATION !== undefined) {
+        if (process.env.ALLOW_TIME_ENTRY_CREATION) {
             restrictions.allowTimeEntryCreation = process.env.ALLOW_TIME_ENTRY_CREATION === 'true';
         }
-        if (process.env.ALLOW_TIME_ENTRY_DELETION !== undefined) {
+        if (process.env.ALLOW_TIME_ENTRY_DELETION) {
             restrictions.allowTimeEntryDeletion = process.env.ALLOW_TIME_ENTRY_DELETION === 'true';
         }
-        if (process.env.ALLOW_PROJECT_MANAGEMENT !== undefined) {
+        if (process.env.ALLOW_PROJECT_MANAGEMENT) {
             restrictions.allowProjectManagement = process.env.ALLOW_PROJECT_MANAGEMENT === 'true';
         }
-        if (process.env.ALLOW_CLIENT_MANAGEMENT !== undefined) {
+        if (process.env.ALLOW_CLIENT_MANAGEMENT) {
             restrictions.allowClientManagement = process.env.ALLOW_CLIENT_MANAGEMENT === 'true';
         }
-        if (process.env.ALLOW_USER_MANAGEMENT !== undefined) {
+        if (process.env.ALLOW_USER_MANAGEMENT) {
             restrictions.allowUserManagement = process.env.ALLOW_USER_MANAGEMENT === 'true';
         }
         return restrictions;
