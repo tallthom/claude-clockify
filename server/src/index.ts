@@ -86,8 +86,9 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
       ],
     };
   } catch (error: any) {
-    // Re-throw MCP errors as-is
-    if (error instanceof McpError) {
+    // Re-throw MCP errors as-is — use duck-typing rather than instanceof to survive
+    // module deduplication issues inside .mcpb bundles where SDK may load twice
+    if (error?.code !== undefined && error?.message !== undefined && typeof error.code === 'number') {
       throw error;
     }
 
