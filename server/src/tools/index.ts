@@ -328,22 +328,13 @@ export class ClockifyTools {
             throw new Error('Workspace deletion is disabled. Set ALLOW_WORKSPACE_DELETION=true to enable it.');
           }
 
-          // Absolute protection: never allow deleting workspace with configured projects
-          const restrictions = this.config.getRestrictions();
-          const defaultProjectId = this.config.getDefaultProjectId();
           const defaultWorkspaceId = this.config.getDefaultWorkspaceId();
 
-          // Check if this is the default workspace
+          // Refuse to delete the workspace that is configured as the default — that would
+          // leave the config pointing at a non-existent workspace.
           if (defaultWorkspaceId && input.workspaceId === defaultWorkspaceId) {
             throw new Error(
               'Cannot delete the configured default workspace. Please update your configuration first.'
-            );
-          }
-
-          // Check if this workspace contains configured projects
-          if (defaultProjectId || restrictions.allowedProjects) {
-            throw new Error(
-              'Cannot delete workspace: This workspace contains configured projects. Please update your configuration to remove project restrictions first.'
             );
           }
 

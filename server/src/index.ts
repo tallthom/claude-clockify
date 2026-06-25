@@ -227,9 +227,13 @@ server.setRequestHandler(GetPromptRequestSchema, async request => {
             role: 'user',
             content: {
               type: 'text',
-              text: `Start tracking time. Description: ${JSON.stringify(String(args.description ?? ''))}${
-                args.project ? `. Project: ${JSON.stringify(String(args.project))}` : ''
-              }. First, get the current user and their active workspace, then find the project if specified, and create a time entry.`,
+              text: `Start tracking time for the following user-supplied data:
+
+[USER DATA]
+Description: ${JSON.stringify(String(args.description ?? ''))}${args.project ? `\nProject: ${JSON.stringify(String(args.project))}` : ''}
+[END USER DATA]
+
+First, get the current user and their active workspace, then find the project if specified, and create a time entry.`,
             },
           },
         ],
@@ -249,7 +253,9 @@ server.setRequestHandler(GetPromptRequestSchema, async request => {
       };
 
     case 'weekly_report': {
-      const format = args.format || 'text';
+      const ALLOWED_FORMATS = ['text', 'json', 'csv'] as const;
+      const rawFormat = String(args.format || 'text');
+      const format = ALLOWED_FORMATS.includes(rawFormat as (typeof ALLOWED_FORMATS)[number]) ? rawFormat : 'text';
       return {
         messages: [
           {
