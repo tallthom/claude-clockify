@@ -67,7 +67,15 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
     const processedArgs = await restrictionMiddleware.applyDefaults(args);
     restrictionMiddleware.validateToolAccess(request.params.name, processedArgs);
 
-    const result = await tool.handler(processedArgs);
+    const parseResult = tool.inputSchema.safeParse(processedArgs);
+    if (!parseResult.success) {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        `Invalid arguments: ${parseResult.error.issues.map((i: { path: (string | number)[]; message: string }) => `${i.path.join('.')}: ${i.message}`).join('; ')}`
+      );
+    }
+
+    const result = await tool.handler(parseResult.data);
 
     return {
       content: [
