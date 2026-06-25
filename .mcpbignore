@@ -1,0 +1,55 @@
+# Source files — only dist is needed at runtime
+server/src/
+
+# Dev tooling config
+server/vitest.config.ts
+
+# Test output
+server/dist/tests/
+
+# Docs and specs
+docs/
+
+# Dev-only node_modules
+server/node_modules/.bin/
+server/node_modules/.vite/
+server/node_modules/@esbuild/
+server/node_modules/@jridgewell/
+server/node_modules/@oxc-project/
+server/node_modules/@rolldown/
+server/node_modules/@vitest/
+server/node_modules/chai/
+server/node_modules/esbuild/
+server/node_modules/es-module-lexer/
+server/node_modules/estree-walker/
+server/node_modules/expect-type/
+server/node_modules/fdir/
+server/node_modules/hono/
+server/node_modules/lightningcss/
+server/node_modules/lightningcss-darwin-arm64/
+server/node_modules/magic-string/
+server/node_modules/nanoid/
+server/node_modules/pathe/
+server/node_modules/picocolors/
+server/node_modules/picomatch/
+server/node_modules/postcss/
+server/node_modules/rolldown/
+server/node_modules/siginfo/
+server/node_modules/source-map-js/
+server/node_modules/stackback/
+server/node_modules/std-env/
+server/node_modules/tinybench/
+server/node_modules/tinyexec/
+server/node_modules/tinyglobby/
+server/node_modules/tinyrainbow/
+server/node_modules/tsx/
+server/node_modules/typescript/
+server/node_modules/vite/
+server/node_modules/vitest/
+server/node_modules/@types/
+server/node_modules/assertion-error/
+server/node_modules/convert-source-map/
+server/node_modules/obug/
+server/node_modules/why-is-node-running/
+server/node_modules/stackback/
+server/node_modules/require-from-string/
