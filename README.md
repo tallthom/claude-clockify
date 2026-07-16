@@ -22,7 +22,7 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 ### Claude CLI / Linux
 
 1. Clone this repository: `git clone https://github.com/tallthom/claude-clockify.git`
-2. Install dependencies: `cd claude-clockify/server && npm install`
+2. Install dependencies and build: `cd claude-clockify/server && npm install && npm run build`
 3. Add the following to your Claude CLI MCP config (`~/.claude/settings.json` → `mcpServers`):
 
 ```json
