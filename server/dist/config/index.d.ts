@@ -43,11 +43,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowUserManagement?: boolean | undefined;
         allowWorkspaceDeletion?: boolean | undefined;
     }>>;
-    cacheEnabled: z.ZodDefault<z.ZodBoolean>;
-    cacheTTLSeconds: z.ZodDefault<z.ZodNumber>;
-    rateLimitPerMinute: z.ZodDefault<z.ZodNumber>;
     timezone: z.ZodDefault<z.ZodString>;
-    logLevel: z.ZodDefault<z.ZodEnum<["debug", "info", "warn", "error"]>>;
     toolFiltering: z.ZodDefault<z.ZodObject<{
         enabledCategories: z.ZodDefault<z.ZodArray<z.ZodEnum<["user", "workspace", "project", "client", "timeEntry", "tag", "task", "report", "bulk", "search", "customField"]>, "many">>;
         enabledTools: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
@@ -82,11 +78,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowedWorkspaces?: string[] | undefined;
         defaultWorkspaceId?: string | undefined;
     };
-    cacheEnabled: boolean;
-    cacheTTLSeconds: number;
-    rateLimitPerMinute: number;
     timezone: string;
-    logLevel: "debug" | "info" | "warn" | "error";
     toolFiltering: {
         enabledCategories: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search" | "customField")[];
         maxTools: number;
@@ -111,11 +103,7 @@ export declare const ConfigSchema: z.ZodObject<{
         allowUserManagement?: boolean | undefined;
         allowWorkspaceDeletion?: boolean | undefined;
     } | undefined;
-    cacheEnabled?: boolean | undefined;
-    cacheTTLSeconds?: number | undefined;
-    rateLimitPerMinute?: number | undefined;
     timezone?: string | undefined;
-    logLevel?: "debug" | "info" | "warn" | "error" | undefined;
     toolFiltering?: {
         enabledCategories?: ("user" | "workspace" | "project" | "client" | "timeEntry" | "tag" | "task" | "report" | "bulk" | "search" | "customField")[] | undefined;
         enabledTools?: string[] | undefined;
@@ -127,7 +115,6 @@ export type Config = z.infer<typeof ConfigSchema>;
 export declare class ConfigurationManager {
     private config;
     constructor(overrides?: Partial<Config>);
-    private warnUnimplementedSettings;
     private parseToolFiltering;
     private parseRestrictions;
     get(): Config;

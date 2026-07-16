@@ -1,3 +1,4 @@
+const MAX_PAGES = 10;
 // Returns "YYYY-MM-DD" from a Date using UTC fields
 function utcDateString(date) {
     const y = date.getUTCFullYear();
@@ -74,6 +75,8 @@ export class TimeEntryService {
             });
             all.push(...batch);
             if (batch.length < pageSize)
+                break;
+            if (page >= MAX_PAGES)
                 break;
             page++;
         }

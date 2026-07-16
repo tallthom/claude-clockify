@@ -254,7 +254,7 @@ export const updateCustomFieldSchema = z.object({
 });
 export const bulkTimeEntriesSchema = z.object({
     workspaceId: objectIdSchema.describe('The workspace ID'),
-    timeEntryIds: z.array(objectIdSchema).describe('Array of time entry IDs'),
+    timeEntryIds: z.array(objectIdSchema).min(1).max(500).describe('Array of time entry IDs (max 500)'),
     action: z.enum(['DELETE', 'UPDATE']).describe('Action to perform'),
     updates: z
         .object({

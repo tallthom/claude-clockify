@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import 'dotenv/config';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema, ListPromptsRequestSchema, GetPromptRequestSchema, ErrorCode, McpError, } from '@modelcontextprotocol/sdk/types.js';
@@ -10,7 +9,7 @@ import { ConfigurationManager } from './config/index.js';
 const config = new ConfigurationManager();
 const server = new Server({
     name: 'clockify-mcp-server',
-    version: '1.0.0',
+    version: '1.2.0',
     description: 'Comprehensive Clockify time tracking integration with configurable restrictions',
 }, {
     capabilities: {
@@ -193,7 +192,13 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
                         role: 'user',
                         content: {
                             type: 'text',
-                            text: `Start tracking time. Description: ${JSON.stringify(String(args.description ?? ''))}${args.project ? `. Project: ${JSON.stringify(String(args.project))}` : ''}. First, get the current user and their active workspace, then find the project if specified, and create a time entry.`,
+                            text: `Start tracking time for the following user-supplied data:
+
+[USER DATA]
+Description: ${JSON.stringify(String(args.description ?? ''))}${args.project ? `\nProject: ${JSON.stringify(String(args.project))}` : ''}
+[END USER DATA]
+
+First, get the current user and their active workspace, then find the project if specified, and create a time entry.`,
                         },
                     },
                 ],
@@ -211,7 +216,9 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
                 ],
             };
         case 'weekly_report': {
-            const format = args.format || 'text';
+            const ALLOWED_FORMATS = ['text', 'json', 'csv'];
+            const rawFormat = String(args.format || 'text');
+            const format = ALLOWED_FORMATS.includes(rawFormat) ? rawFormat : 'text';
             return {
                 messages: [
                     {

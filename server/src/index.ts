@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import 'dotenv/config';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -23,7 +22,7 @@ const config = new ConfigurationManager();
 const server = new Server(
   {
     name: 'clockify-mcp-server',
-    version: '1.0.0',
+    version: '1.2.0',
     description: 'Comprehensive Clockify time tracking integration with configurable restrictions',
   },
   {

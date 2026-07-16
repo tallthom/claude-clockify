@@ -49,15 +49,8 @@ export const ConfigSchema = z.object({
         allowUserManagement: false,
         allowWorkspaceDeletion: false,
     })),
-    // Caching
-    cacheEnabled: z.boolean().default(true).describe('Enable caching for API responses'),
-    cacheTTLSeconds: z.number().default(300).describe('Cache TTL in seconds'),
-    // Rate limiting
-    rateLimitPerMinute: z.number().default(50).describe('Max API calls per minute'),
     // Timezone for displaying timestamps
     timezone: z.string().default('UTC').describe('IANA timezone for displaying timestamps (e.g. Asia/Tokyo, Europe/Athens)'),
-    // Logging
-    logLevel: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
     // Tool Visibility
     toolFiltering: z
         .object({
@@ -100,10 +93,6 @@ export class ConfigurationManager {
             timezone: process.env.CLOCKIFY_TIMEZONE || systemTimezone,
             restrictions: this.parseRestrictions(),
             toolFiltering: this.parseToolFiltering(),
-            cacheEnabled: process.env.CACHE_ENABLED !== undefined ? process.env.CACHE_ENABLED === 'true' : undefined,
-            cacheTTLSeconds: process.env.CACHE_TTL ? parseInt(process.env.CACHE_TTL) : undefined,
-            rateLimitPerMinute: process.env.RATE_LIMIT ? parseInt(process.env.RATE_LIMIT) : undefined,
-            logLevel: process.env.LOG_LEVEL,
         };
         // Remove undefined values
         const cleanConfig = Object.fromEntries(Object.entries(envConfig).filter(([_, v]) => v !== undefined));
@@ -115,21 +104,6 @@ export class ConfigurationManager {
             throw new Error(`Configuration validation failed: ${result.error.message}`);
         }
         this.config = result.data;
-        this.warnUnimplementedSettings();
-    }
-    warnUnimplementedSettings() {
-        const unimplemented = [];
-        if (process.env.RATE_LIMIT)
-            unimplemented.push('RATE_LIMIT');
-        if (process.env.CACHE_ENABLED)
-            unimplemented.push('CACHE_ENABLED');
-        if (process.env.CACHE_TTL)
-            unimplemented.push('CACHE_TTL');
-        if (process.env.LOG_LEVEL)
-            unimplemented.push('LOG_LEVEL');
-        if (unimplemented.length > 0) {
-            console.warn(`[clockify-mcp] Warning: ${unimplemented.join(', ')} ${unimplemented.length === 1 ? 'is' : 'are'} set but not yet enforced.`);
-        }
     }
     parseToolFiltering() {
         const toolFiltering = {};

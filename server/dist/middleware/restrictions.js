@@ -31,7 +31,8 @@ export class RestrictionMiddleware {
         // Apply default workspace if not specified — auto-detect via API if no env override
         if (!result.workspaceId) {
             if (this.client) {
-                result.workspaceId = await resolveWorkspaceId(this.client);
+                const allowedWorkspaces = this.config.getRestrictions().allowedWorkspaces;
+                result.workspaceId = await resolveWorkspaceId(this.client, allowedWorkspaces);
             }
             else if (this.config.getDefaultWorkspaceId()) {
                 result.workspaceId = this.config.getDefaultWorkspaceId();
