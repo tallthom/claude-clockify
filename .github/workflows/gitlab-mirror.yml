@@ -1,0 +1,29 @@
+name: Mirror to git.in.moodle.com
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GITLAB_MIRROR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.GITLAB_MIRROR_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Push mirror
+        run: |
+          git remote add gitlab git@git.in.moodle.com:thom.rawson/claude-clockify.git
+          git push --prune gitlab '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
