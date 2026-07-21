@@ -1,10 +1,12 @@
-# Claude Clockify — Claude Desktop Extension
+# Claude Clockify: Claude Desktop Extension
+
+> **Note:** This repository is mirrored to git.in.moodle.com as an internal backup copy. The canonical repository, including releases, issues, and the latest `.mcpb` download, is on GitHub: https://github.com/tallthom/claude-clockify.
 
 A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.me), letting you log time, check running timers, and manage time entries directly from Claude.
 
 ## Requirements
 
-- **Node.js v18 or later** must be installed on your machine. The extension runs a local Node.js server — Claude Desktop does not bundle a Node runtime.
+- **Node.js v18 or later** must be installed on your machine. The extension runs a local Node.js server. Claude Desktop does not bundle a Node runtime.
   - Download from [nodejs.org](https://nodejs.org) (choose the LTS version)
   - To check if you already have it: open a terminal and run `node --version`
 
@@ -12,12 +14,12 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 
 ### Claude Desktop (macOS and Windows)
 
-1. Download `claude-clockify.mcpb` from the [latest release](../../releases/latest)
+1. Download `claude-clockify.mcpb` from the [latest release](https://github.com/tallthom/claude-clockify/releases/latest)
 2. Go to [claude.ai/settings](https://claude.ai/settings) → **Extensions**
 3. Click **Add Extension** and select the downloaded `.mcpb` file
 4. Enter your Clockify API key when prompted (see below)
 
-> **Security prompt:** During installation, Claude will warn that "developer information has not been verified by Anthropic." This is shown for all third-party extensions — Anthropic doesn't yet offer a developer verification programme. You can review the full source in this repository.
+> **Security prompt:** During installation, Claude will warn that "developer information has not been verified by Anthropic." This is shown for all third-party extensions, since Anthropic doesn't yet offer a developer verification program. You can review the full source in this repository.
 
 ### Claude CLI / Linux
 
