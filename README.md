@@ -1,6 +1,6 @@
 # Claude Clockify: Claude Desktop Extension
 
-> **Note:** This repository is mirrored to git.in.moodle.com as an internal backup copy. The canonical repository, including releases, issues, and the latest `.mcpb` download, is on GitHub: https://github.com/tallthom/claude-clockify.
+> **Note:** This repository is mirrored internally at Moodle as a backup copy. The canonical repository, including releases, issues, and the latest `.mcpb` download, is on GitHub: https://github.com/tallthom/claude-clockify.
 
 A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.me), letting you log time, check running timers, and manage time entries directly from Claude.
 
