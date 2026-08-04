@@ -966,6 +966,16 @@ export class ClockifyTools {
         inputSchema: schemas.workspaceIdSchema.extend({
           projectId: schemas.objectIdSchema.describe('The project ID'),
           isActive: z.boolean().optional().describe('Filter by active status'),
+          name: z
+            .string()
+            .optional()
+            .describe('Filter by task name (partial match unless strictName is set)'),
+          strictName: z.boolean().optional().describe('Require an exact match on name'),
+          page: z
+            .number()
+            .optional()
+            .describe('Page number (1-based) to fetch a single page instead of auto-paginating'),
+          'page-size': z.number().optional().describe('Number of tasks per page'),
         }),
         handler: async (input: any) => {
           const tasks = await this.taskService.getAllTasks(
