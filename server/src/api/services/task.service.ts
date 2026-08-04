@@ -17,11 +17,18 @@ export class TaskService {
       'page-size'?: number;
     }
   ): Promise<ClockifyTask[]> {
+    // Clockify's API expects kebab-case for these two params (confirmed against
+    // the live API — camelCase is silently ignored, matching page-size's convention).
+    const { isActive, strictName, ...rest } = options ?? {};
+    const wireParams: Record<string, unknown> = { ...rest };
+    if (isActive !== undefined) wireParams['is-active'] = isActive;
+    if (strictName !== undefined) wireParams['strict-name-search'] = strictName;
+
     // If caller requested a specific page, honour it directly
-    if (options?.page !== undefined) {
+    if (wireParams.page !== undefined) {
       return this.client.get<ClockifyTask[]>(
         `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
-        options
+        wireParams
       );
     }
 
@@ -32,7 +39,7 @@ export class TaskService {
     while (true) {
       const batch = await this.client.get<ClockifyTask[]>(
         `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
-        { ...options, page, 'page-size': pageSize }
+        { ...wireParams, page, 'page-size': pageSize }
       );
       all.push(...batch);
       if (batch.length < pageSize) break;
