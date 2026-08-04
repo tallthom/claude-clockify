@@ -15,7 +15,15 @@ export class ClientService {
       sortOrder?: 'ASCENDING' | 'DESCENDING';
     }
   ): Promise<ClockifyClient[]> {
-    return this.client.get<ClockifyClient[]>(`/workspaces/${workspaceId}/clients`, options);
+    // Clockify's API expects kebab-case for sort params. Same shape as the
+    // confirmed fixes in project.service.ts and user.service.ts; this one
+    // could not be reconfirmed live (no clients exist in this workspace).
+    const { sortColumn, sortOrder, ...rest } = options ?? {};
+    const wireParams: Record<string, unknown> = { ...rest };
+    if (sortColumn !== undefined) wireParams['sort-column'] = sortColumn;
+    if (sortOrder !== undefined) wireParams['sort-order'] = sortOrder;
+
+    return this.client.get<ClockifyClient[]>(`/workspaces/${workspaceId}/clients`, wireParams);
   }
 
   async getClientById(workspaceId: string, clientId: string): Promise<ClockifyClient> {
