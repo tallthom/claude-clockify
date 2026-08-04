@@ -27,7 +27,15 @@ export class UserService {
       sortOrder?: 'ASCENDING' | 'DESCENDING';
     }
   ): Promise<ClockifyUser[]> {
-    return this.client.get<ClockifyUser[]>(`/workspaces/${workspaceId}/users`, options);
+    // Clockify's API expects kebab-case for sort params (confirmed against the
+    // live API). includeRoles was also tested live and confirmed to already
+    // work correctly in camelCase, so it is intentionally left untouched.
+    const { sortColumn, sortOrder, ...rest } = options ?? {};
+    const wireParams: Record<string, unknown> = { ...rest };
+    if (sortColumn !== undefined) wireParams['sort-column'] = sortColumn;
+    if (sortOrder !== undefined) wireParams['sort-order'] = sortOrder;
+
+    return this.client.get<ClockifyUser[]>(`/workspaces/${workspaceId}/users`, wireParams);
   }
 
   async updateUser(
