@@ -22,7 +22,19 @@ export class ProjectService {
       'page-size'?: number;
     }
   ): Promise<ClockifyProject[]> {
-    return this.client.get<ClockifyProject[]>(`/workspaces/${workspaceId}/projects`, options);
+    // Clockify's API expects kebab-case for these params (confirmed against the
+    // live API — camelCase is silently ignored, matching page-size's convention).
+    const { strictName, clientStatus, userStatus, isTemplate, sortColumn, sortOrder, ...rest } =
+      options ?? {};
+    const wireParams: Record<string, unknown> = { ...rest };
+    if (strictName !== undefined) wireParams['strict-name-search'] = strictName;
+    if (clientStatus !== undefined) wireParams['client-status'] = clientStatus;
+    if (userStatus !== undefined) wireParams['user-status'] = userStatus;
+    if (isTemplate !== undefined) wireParams['is-template'] = isTemplate;
+    if (sortColumn !== undefined) wireParams['sort-column'] = sortColumn;
+    if (sortOrder !== undefined) wireParams['sort-order'] = sortOrder;
+
+    return this.client.get<ClockifyProject[]>(`/workspaces/${workspaceId}/projects`, wireParams);
   }
 
   async getProjectById(
