@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch all branches and tags
-        run: git fetch origin '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
+        run: git fetch --update-head-ok origin '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
 
       - name: Set up SSH
         run: |
