@@ -22,7 +22,7 @@ const config = new ConfigurationManager();
 const server = new Server(
   {
     name: 'clockify-mcp-server',
-    version: '1.2.0',
+    version: '1.2.1',
     description: 'Comprehensive Clockify time tracking integration with configurable restrictions',
   },
   {

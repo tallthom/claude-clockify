@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "claude-clockify",
   "display_name": "Claude Clockify",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Clockify time tracking integration for Claude Desktop. Log time, check running timers, and manage time entries.",
   "author": {
     "name": "Thom Rawson",
