@@ -44,15 +44,26 @@ describe('getAllTasks pagination cap', () => {
     expect(params).toHaveProperty('page-size', 10);
   });
 
-  it('uses the caller-supplied page-size as the break threshold, not the hardcoded 50', async () => {
-    const getMock = vi.fn()
-      .mockResolvedValueOnce(makeFullPage(10))
-      .mockResolvedValueOnce(makeFullPage(5));
+  it('treats page-size alone as a request for a single page, not an auto-paginate batch size', async () => {
+    // Issue #30: page-size alone used to be treated as the auto-paginate batch
+    // size, so a "full" page (length === page-size) kept triggering more
+    // fetches up to MAX_PAGES. page-size alone should return just one page.
+    const getMock = vi.fn().mockResolvedValue(makeFullPage(5));
     const service = new TaskService({ get: getMock } as unknown as ClockifyApiClient);
 
-    const result = await service.getAllTasks('ws1', 'proj1', { 'page-size': 10 });
+    const result = await service.getAllTasks('ws1', 'proj1', { 'page-size': 5 });
 
-    expect(result).toHaveLength(15);
-    expect(getMock).toHaveBeenCalledTimes(2);
+    expect(result).toHaveLength(5);
+    expect(getMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('defaults page to 1 when only page-size is supplied', async () => {
+    const getMock = vi.fn().mockResolvedValue(makeFullPage(5));
+    const service = new TaskService({ get: getMock } as unknown as ClockifyApiClient);
+
+    await service.getAllTasks('ws1', 'proj1', { 'page-size': 5 });
+
+    const [, params] = getMock.mock.calls[0];
+    expect(params).toHaveProperty('page', 1);
   });
 });

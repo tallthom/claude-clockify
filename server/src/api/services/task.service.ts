@@ -24,19 +24,19 @@ export class TaskService {
     if (isActive !== undefined) wireParams['is-active'] = isActive;
     if (strictName !== undefined) wireParams['strict-name-search'] = strictName;
 
-    // If caller requested a specific page, honour it directly
-    if (wireParams.page !== undefined) {
+    // If caller requested a specific page or page-size, honour it directly as a
+    // single page rather than treating page-size as an auto-paginate batch size
+    // (issue #30: page-size alone used to keep fetching up to MAX_PAGES).
+    if (wireParams.page !== undefined || wireParams['page-size'] !== undefined) {
       return this.client.get<ClockifyTask[]>(
         `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
-        wireParams
+        { page: 1, ...wireParams }
       );
     }
 
-    // Otherwise auto-paginate until we get a short page. Honour a caller-supplied
-    // page-size instead of silently overwriting it with the default (a later
-    // duplicate key in an object literal always wins, so leaving this as a bare
-    // 50 clobbered any page-size the caller had put in wireParams via ...rest).
-    const pageSize = typeof wireParams['page-size'] === 'number' ? (wireParams['page-size'] as number) : 50;
+    // Otherwise auto-paginate until we get a short page, bounded by MAX_PAGES.
+    // Neither page nor page-size was supplied here, so this is always 50.
+    const pageSize = 50;
     const all: ClockifyTask[] = [];
     let page = 1;
     while (true) {
