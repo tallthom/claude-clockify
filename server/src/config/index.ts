@@ -85,7 +85,7 @@ export const ConfigSchema = z.object({
         .optional()
         .describe('Specific tools to enable (overrides categories)'),
       disabledTools: z.array(z.string()).optional().describe('Specific tools to disable'),
-      maxTools: z.number().default(50).describe('Maximum number of tools to expose'),
+      maxTools: z.number().default(100).describe('Maximum number of tools to expose'),
     })
     .default(() => ({
       enabledCategories: ['user', 'workspace', 'project', 'client', 'timeEntry', 'tag', 'task', 'report', 'bulk', 'search', 'customField'] as (
@@ -101,7 +101,7 @@ export const ConfigSchema = z.object({
         | 'search'
         | 'customField'
       )[],
-      maxTools: 50,
+      maxTools: 100,
     })),
 });
 

@@ -39,6 +39,19 @@ interface ToolDefinition {
   priority?: number; // Lower number = higher priority when filtering
 }
 
+export function applyMaxTools<T extends { name: string }>(
+  tools: T[],
+  maxTools: number
+): { kept: T[]; dropped: string[] } {
+  if (tools.length <= maxTools) {
+    return { kept: tools, dropped: [] };
+  }
+  return {
+    kept: tools.slice(0, maxTools),
+    dropped: tools.slice(maxTools).map(tool => tool.name),
+  };
+}
+
 export class ClockifyTools {
   private userService: UserService;
   private workspaceService: WorkspaceService;
@@ -1230,7 +1243,10 @@ export class ClockifyTools {
     // If specific tools are enabled, only include those
     if (filtering.enabledTools && filtering.enabledTools.length > 0) {
       const enabledSet = new Set(filtering.enabledTools);
-      return allTools.filter(tool => enabledSet.has(tool.name)).slice(0, filtering.maxTools);
+      const matched = allTools.filter(tool => enabledSet.has(tool.name));
+      const { kept, dropped } = applyMaxTools(matched, filtering.maxTools);
+      this.warnIfToolsDropped(dropped, filtering.maxTools);
+      return kept;
     }
 
     // Filter by categories
@@ -1247,7 +1263,16 @@ export class ClockifyTools {
     filteredTools.sort((a, b) => (a.priority || 99) - (b.priority || 99));
 
     // Limit to max tools
-    return filteredTools.slice(0, filtering.maxTools);
+    const { kept, dropped } = applyMaxTools(filteredTools, filtering.maxTools);
+    this.warnIfToolsDropped(dropped, filtering.maxTools);
+    return kept;
+  }
+
+  private warnIfToolsDropped(dropped: string[], maxTools: number): void {
+    if (dropped.length === 0) return;
+    console.warn(
+      `Warning: maxTools is set to ${maxTools}, excluding ${dropped.length} tool(s) that would otherwise be enabled: ${dropped.join(', ')}. Raise MAX_TOOLS to expose them.`
+    );
   }
 
   getTools() {
