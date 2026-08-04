@@ -66,4 +66,14 @@ describe('getAllTasks pagination cap', () => {
     const [, params] = getMock.mock.calls[0];
     expect(params).toHaveProperty('page', 1);
   });
+
+  it('lets a caller-supplied page override the page: 1 default', async () => {
+    const getMock = vi.fn().mockResolvedValue(makeFullPage(10));
+    const service = new TaskService({ get: getMock } as unknown as ClockifyApiClient);
+
+    await service.getAllTasks('ws1', 'proj1', { page: 3, 'page-size': 10 });
+
+    const [, params] = getMock.mock.calls[0];
+    expect(params).toHaveProperty('page', 3);
+  });
 });
