@@ -1,6 +1,8 @@
 import { ClockifyApiClient } from '../client.js';
 import type { ClockifyTask } from '../../types/index.js';
 
+const MAX_PAGES = 10;
+
 export class TaskService {
   constructor(private client: ClockifyApiClient) {}
 
@@ -34,6 +36,7 @@ export class TaskService {
       );
       all.push(...batch);
       if (batch.length < pageSize) break;
+      if (page >= MAX_PAGES) break;
       page++;
     }
     return all;
