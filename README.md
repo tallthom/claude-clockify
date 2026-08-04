@@ -25,7 +25,7 @@ A Claude Desktop Extension that connects Claude to [Clockify](https://clockify.m
 
 1. Clone this repository: `git clone https://github.com/tallthom/claude-clockify.git`
 2. Install dependencies and build: `cd claude-clockify/server && npm install && npm run build`
-3. Add the following to your Claude CLI MCP config (`~/.claude/settings.json` → `mcpServers`):
+3. Add the following to your Claude Code MCP config. For a single project, create/edit `.mcp.json` in the project root; for a global config available in every project, use `~/.claude.json` (top-level `mcpServers` key). Alternatively, run `claude mcp add clockify -- node /path/to/claude-clockify/server/dist/index.js` and set the env vars when prompted.
 
 ```json
 {
@@ -62,6 +62,58 @@ If you have multiple workspaces and want to lock the extension to a specific one
 "env": {
   "CLOCKIFY_API_KEY": "your_api_key",
   "CLOCKIFY_WORKSPACE_ID": "your_workspace_id"
+}
+```
+
+## Restricting access (advanced)
+
+The server supports scoping and permission env vars for locking an install down to a specific project, workspace, or set of operations. These are CLI-only for now: `manifest.json`'s `user_config` doesn't expose them, so a Claude Desktop / Cowork install via the `.mcpb` file has no UI to set them. Add them to the `env` block in your CLI MCP config alongside `CLOCKIFY_API_KEY`.
+
+### Project scoping
+
+| Env var | Type | Effect |
+|---|---|---|
+| `ALLOWED_PROJECTS` | comma-separated project IDs | Only these projects can be accessed or modified |
+| `DENIED_PROJECTS` | comma-separated project IDs | These projects are blocked, checked before `ALLOWED_PROJECTS` |
+| `DEFAULT_PROJECT_ID` | project ID | Used when a tool call doesn't specify a project |
+
+### Workspace scoping
+
+| Env var | Type | Effect |
+|---|---|---|
+| `ALLOWED_WORKSPACES` | comma-separated workspace IDs | Only these workspaces can be accessed |
+| `DEFAULT_WORKSPACE_ID` | workspace ID | Same as `CLOCKIFY_WORKSPACE_ID` above; used when a tool call doesn't specify a workspace |
+
+### Operation permissions
+
+| Env var | Default | Effect |
+|---|---|---|
+| `READ_ONLY` | `false` | If `true`, blocks every write operation regardless of the toggles below |
+| `ALLOW_TIME_ENTRY_CREATION` | `true` | Allow creating time entries |
+| `ALLOW_TIME_ENTRY_DELETION` | `true` | Allow deleting time entries |
+| `ALLOW_PROJECT_MANAGEMENT` | `true` | Allow creating, updating, or deleting projects |
+| `ALLOW_CLIENT_MANAGEMENT` | `true` | Allow managing clients |
+| `ALLOW_USER_MANAGEMENT` | `false` | Allow managing users |
+| `ALLOW_WORKSPACE_DELETION` | `false` | Allow deleting workspaces |
+
+All boolean vars take the literal string `"true"`; anything else is treated as `false`.
+
+**Example: read-only install for a teammate who should only ever view time entries.**
+
+```json
+"env": {
+  "CLOCKIFY_API_KEY": "their_api_key",
+  "READ_ONLY": "true"
+}
+```
+
+**Example: lock the extension to a single project, so every tool call defaults to it and no other project can be touched.**
+
+```json
+"env": {
+  "CLOCKIFY_API_KEY": "your_api_key",
+  "DEFAULT_PROJECT_ID": "65c9c7ab0367d924b62d84c0",
+  "ALLOWED_PROJECTS": "65c9c7ab0367d924b62d84c0"
 }
 ```
 
