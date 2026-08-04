@@ -33,4 +33,26 @@ describe('getAllTasks pagination cap', () => {
     expect(result).toHaveLength(70);
     expect(mockClient.get).toHaveBeenCalledTimes(2);
   });
+
+  it('honours a caller-supplied page-size instead of silently overwriting it with the default', async () => {
+    const getMock = vi.fn().mockResolvedValue(makeFullPage(10));
+    const service = new TaskService({ get: getMock } as unknown as ClockifyApiClient);
+
+    await service.getAllTasks('ws1', 'proj1', { 'page-size': 10 });
+
+    const [, params] = getMock.mock.calls[0];
+    expect(params).toHaveProperty('page-size', 10);
+  });
+
+  it('uses the caller-supplied page-size as the break threshold, not the hardcoded 50', async () => {
+    const getMock = vi.fn()
+      .mockResolvedValueOnce(makeFullPage(10))
+      .mockResolvedValueOnce(makeFullPage(5));
+    const service = new TaskService({ get: getMock } as unknown as ClockifyApiClient);
+
+    const result = await service.getAllTasks('ws1', 'proj1', { 'page-size': 10 });
+
+    expect(result).toHaveLength(15);
+    expect(getMock).toHaveBeenCalledTimes(2);
+  });
 });

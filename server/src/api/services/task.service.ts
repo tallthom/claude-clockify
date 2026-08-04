@@ -32,8 +32,11 @@ export class TaskService {
       );
     }
 
-    // Otherwise auto-paginate until we get a short page
-    const pageSize = 50;
+    // Otherwise auto-paginate until we get a short page. Honour a caller-supplied
+    // page-size instead of silently overwriting it with the default (a later
+    // duplicate key in an object literal always wins, so leaving this as a bare
+    // 50 clobbered any page-size the caller had put in wireParams via ...rest).
+    const pageSize = typeof wireParams['page-size'] === 'number' ? (wireParams['page-size'] as number) : 50;
     const all: ClockifyTask[] = [];
     let page = 1;
     while (true) {
