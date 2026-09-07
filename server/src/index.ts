@@ -15,6 +15,7 @@ import {
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { ClockifyTools } from './tools/index.js';
 import { ConfigurationManager } from './config/index.js';
+import { mapClockifyError } from './errors/mapClockifyError.js';
 
 // Initialize configuration
 const config = new ConfigurationManager();
@@ -84,31 +85,8 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         },
       ],
     };
-  } catch (error: any) {
-    // Re-throw MCP errors as-is — use duck-typing rather than instanceof to survive
-    // module deduplication issues inside .mcpb bundles where SDK may load twice
-    if (error?.code !== undefined && error?.message !== undefined && typeof error.code === 'number') {
-      throw error;
-    }
-
-    if (error.message.includes('Invalid API key') || error.message.includes('unauthorized')) {
-      throw new McpError(
-        ErrorCode.InvalidRequest,
-        'Invalid Clockify API key. Please check your CLOCKIFY_API_KEY environment variable.'
-      );
-    } else if (error.message.includes('Rate limit') || error.message.includes('429')) {
-      throw new McpError(
-        ErrorCode.InvalidRequest,
-        'Clockify API rate limit exceeded. Please try again later.'
-      );
-    } else if (error.message.includes('not found') || error.message.includes('404')) {
-      throw new McpError(ErrorCode.InvalidRequest, `Resource not found: ${error.message}`);
-    } else if (error.message.includes('restricted') || error.message.includes('not allowed')) {
-      throw new McpError(ErrorCode.InvalidRequest, error.message);
-    } else {
-      console.error('Unexpected error:', error instanceof Error ? error.message : String(error));
-      throw new McpError(ErrorCode.InternalError, 'Tool execution failed. Check server logs for details.');
-    }
+  } catch (error) {
+    throw mapClockifyError(error);
   }
 });
 
